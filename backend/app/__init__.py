@@ -12,4 +12,6 @@ def create_app():
     jwt.init_app(app)
     cors.init_app(app)
 
+    with app.app_context():
+        from app.models import user, product, category, order, order_item
     return app
