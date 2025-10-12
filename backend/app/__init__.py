@@ -12,6 +12,9 @@ def create_app():
     jwt.init_app(app)
     cors.init_app(app)
 
-    with app.app_context():
-        from app.models import user, product, category, order, order_item
+    from app.models import user, product, category, order, order_item
+
+    from app.routes import auth
+    app.register_blueprint(auth.bp)
+
     return app
