@@ -14,9 +14,10 @@ def create_app():
 
     from app.models import user, product, category, order, order_item
 
-    from app.routes import auth, products, categories
+    from app.routes import auth, products, categories, orders
     app.register_blueprint(auth.bp)
     app.register_blueprint(products.bp)
     app.register_blueprint(categories.bp)
+    app.register_blueprint(orders.bp)
 
     return app
