@@ -27,5 +27,18 @@ class OrderItem(db.Model):
             'subtotal': self.quantity * self.price
         }
 
-    def __repr__(self):
+    def to_dict(self) -> dict:
+        from app.models.product import Product
+
+        product = Product.query.get(self.product_id)
+        return {
+            'id': self.id,
+            'order_id': self.order_id,
+            'product_id': self.product_id,
+            'quantity': self.quantity,
+            'price': self.price,
+            'subtotal': self.quantity * self.price
+        }
+
+    def __repr__(self) -> str:
         return f"<OrderItem {self.id}: Product {self.product_id} x{self.quantity}>"

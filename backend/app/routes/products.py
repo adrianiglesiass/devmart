@@ -1,21 +1,22 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, Response
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.extensions import db
 from app.models.product import Product
 from app.models.category import Category
+from typing import Tuple
 
 bp = Blueprint('products', __name__, url_prefix='/products')
 
 
 @bp.route('/', methods=['GET'])
-def get_products():
-    products = Product.query.all()
+def get_products() -> Tuple[Response, int]:
+    products: list[Product] = Product.query.all()
     return jsonify([product.to_dict() for product in products]), 200
 
 
 @bp.route('/<int:id>', methods=['GET'])
-def get_product(id):
-    product = Product.query.get(id)
+def get_product(id: int) -> Tuple[Response, int]:
+    product: Product | None = Product.query.get(id)
 
     if not product:
         return jsonify({'error': 'Producto no encontrado'}), 404
@@ -25,18 +26,18 @@ def get_product(id):
 
 @bp.route('/', methods=['POST'])
 @jwt_required()
-def create_product():
-    data = request.get_json()
+def create_product() -> Tuple[Response, int]:
+    data: dict = request.get_json()
 
     if not data or not data.get('name') or not data.get('price'):
         return jsonify({'error': 'Faltan campos para poder crear el producto'}), 400
 
     if data.get('category_id'):
-        category = Category.query.get(data['category_id'])
+        category: Category | None = Category.query.get(data['category_id'])
         if not category:
             return jsonify({'error': 'Categoria no encontrada'}), 404
 
-    product = Product(
+    product: Product = Product(
         name=data['name'],
         description=data.get('description'),
         price=data['price'],
@@ -56,13 +57,13 @@ def create_product():
 
 @bp.route('/<int:id>', methods=['PUT'])
 @jwt_required()
-def update_product(id):
-    product = Product.query.get(id)
+def update_product(id: int) -> Tuple[Response, int]:
+    product: Product | None = Product.query.get(id)
 
     if not product:
         return jsonify({'error': f'No se encontro el producto con id {id}'}), 404
 
-    data = request.get_json()
+    data: dict = request.get_json()
 
     if 'name' in data:
         product.name = data['name']
@@ -87,8 +88,8 @@ def update_product(id):
 
 @bp.route('/<int:id>', methods=['DELETE'])
 @jwt_required()
-def delete_product(id):
-    product = Product.query.get(id)
+def delete_product(id: int) -> Tuple[Response, int]:
+    product: Product | None = Product.query.get(id)
 
     if not product:
         return jsonify({'error': f'No se encontro el producto con id {id}'}), 404
