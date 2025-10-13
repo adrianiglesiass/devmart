@@ -9,20 +9,23 @@ class OrderItem(db.Model):
         'orders.id'), nullable=False)
     product_id = db.Column(db.Integer, db.ForeignKey(
         'products.id'), nullable=False)
-    cantidad = db.Column(db.Integer, nullable=False)
-    precio_unitario = db.Column(db.Float, nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
+    price = db.Column(db.Float, nullable=False)
 
     product = db.relationship('Product')
 
     def to_dict(self):
+        from app.models.product import Product
+
+        product = Product.query.get(self.product_id)
         return {
             'id': self.id,
             'order_id': self.order_id,
             'product_id': self.product_id,
-            'cantidad': self.cantidad,
-            'precio_unitario': self.precio_unitario,
-            'subtotal': self.cantidad * self.precio_unitario
+            'quantity': self.quantity,
+            'price': self.price,
+            'subtotal': self.quantity * self.price
         }
 
     def __repr__(self):
-        return f"<OrderItem {self.id}: Product {self.product_id} x{self.cantidad}>"
+        return f"<OrderItem {self.id}: Product {self.product_id} x{self.quantity}>"
