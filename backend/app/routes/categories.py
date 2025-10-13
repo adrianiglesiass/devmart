@@ -1,22 +1,23 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, Response
 from flask_jwt_extended import jwt_required
 from app.extensions import db
 from app.models.category import Category
 from app.models.product import Product
+from typing import Tuple
 
 
 bp = Blueprint('categories', __name__, url_prefix='/categories')
 
 
 @bp.route('/', methods=['GET'])
-def get_categories():
-    categories = Category.query.all()
+def get_categories() -> Tuple[Response, int]:
+    categories: list[Category] = Category.query.all()
     return jsonify([category.to_dict() for category in categories]), 200
 
 
 @bp.route('/<int:id>', methods=['GET'])
-def get_category(id):
-    category: Category = Category.query.get(id)
+def get_category(id: int) -> Tuple[Response, int]:
+    category: Category | None = Category.query.get(id)
 
     if not category:
         return jsonify({'error': f'Categoria con id {id} no encontrada'}), 404
@@ -25,13 +26,13 @@ def get_category(id):
 
 
 @bp.route('/<int:id>/products', methods=['GET'])
-def get_category_products(id):
-    category: Category = Category.query.get(id)
+def get_category_products(id: int) -> Tuple[Response, int]:
+    category: Category | None = Category.query.get(id)
 
     if not category:
         return jsonify({'error': f'Categoria con id {id} no encontrada'}), 404
 
-    products: Product = Product.query.filter_by(category_id=id).all()
+    products: list[Product] = Product.query.filter_by(category_id=id).all()
 
     return jsonify({
         'category': category.to_dict(),
@@ -41,13 +42,14 @@ def get_category_products(id):
 
 @bp.route('/', methods=['POST'])
 @jwt_required()
-def create_category():
-    data = request.get_json()
+def create_category() -> Tuple[Response, int]:
+    data: dict = request.get_json()
 
     if not data or not data.get('name'):
         return jsonify({'error': 'Es necesario un nombre'}), 400
 
-    exist: Category = Category.query.filter_by(name=data['name']).first()
+    exist: Category | None = Category.query.filter_by(
+        name=data['name']).first()
     if exist:
         return jsonify({'error': 'Esta categoria ya existe'}), 409
 
@@ -67,18 +69,19 @@ def create_category():
 
 @bp.route('/<int:id>', methods=['PUT'])
 @jwt_required()
-def update_category(id):
-    category: Category = Category.query.get(id)
+def update_category(id: int) -> Tuple[Response, int]:
+    category: Category | None = Category.query.get(id)
 
     if not category:
         return jsonify({'error': f'Categoria con id {id} no encontrada'}), 404
 
-    data = request.get_json()
+    data: dict = request.get_json()
     if not data:
         return jsonify({'error': 'No se recibieron datos para actualizar'}), 400
 
     if 'name' in data:
-        exist: Category = Category.query.filter_by(name=data['name']).first()
+        exist: Category | None = Category.query.filter_by(
+            name=data['name']).first()
         if exist and exist.id != id:
             return jsonify({'error': 'Esta categoria ya existe'}), 409
         category.name = data['name']
@@ -96,13 +99,13 @@ def update_category(id):
 
 @bp.route('/<int:id>', methods=['DELETE'])
 @jwt_required()
-def delete_category(id):
-    category: Category = Category.query.get(id)
+def delete_category(id: int) -> Tuple[Response, int]:
+    category: Category | None = Category.query.get(id)
 
     if not category:
         return jsonify({'error': 'Categoria no encontrada'}), 404
 
-    products_count = Product.query.filter_by(category_id=id).count()
+    products_count: int = Product.query.filter_by(category_id=id).count()
     if products_count > 0:
         return jsonify({
             'error': f'No se puede eliminar. Hay {products_count} producto(s) asociados a esta categoria'

@@ -15,7 +15,7 @@ class Product(db.Model):
     created_at = db.Column(
         db.DateTime, default=lambda: datetime.now(timezone.utc))
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         return {
             'id': self.id,
             'name': self.name,
@@ -27,5 +27,5 @@ class Product(db.Model):
             'created_at': self.created_at.isoformat()
         }
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<Product {self.id}: {self.name} - ${self.price}>"

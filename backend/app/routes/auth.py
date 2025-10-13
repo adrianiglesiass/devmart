@@ -1,13 +1,14 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, Response
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from app.extensions import db
 from app.models.user import User
+from typing import Tuple
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 
 @bp.route('/register', methods=['POST'])
-def register():
+def register() -> Tuple[Response, int]:
     data = request.get_json()
 
     if not data or not data.get('username') or not data.get('email') or not data.get('password'):
@@ -32,7 +33,7 @@ def register():
 
 
 @bp.route('/login', methods=['POST'])
-def login():
+def login() -> Tuple[Response, int]:
     data = request.get_json()
 
     if not data or not data.get('email') or not data.get('password'):
@@ -54,10 +55,11 @@ def login():
 
 @bp.route('/me', methods=['GET'])
 @jwt_required()
-def get_current_user():
 
-    user_id = int(get_jwt_identity())
-    user = User.query.get(user_id)
+def get_current_user() -> Tuple[Response, int]:
+
+    user_id: int = int(get_jwt_identity())
+    user: User | None = User.query.get(user_id)
 
     if not user:
         return jsonify({'error': 'Usuario no encontrado'}), 404

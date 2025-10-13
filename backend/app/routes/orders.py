@@ -1,19 +1,20 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, Response
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.extensions import db
 from app.models.order import Order
 from app.models.order_item import OrderItem
 from app.models.product import Product
+from typing import Tuple
 
 bp = Blueprint('orders', __name__, url_prefix='/orders')
 
 
 @bp.route('/', methods=['GET'])
 @jwt_required()
-def get_user_orders():
-    user_id = int(get_jwt_identity())
+def get_user_orders() -> Tuple[Response, int]:
+    user_id: int = int(get_jwt_identity())
 
-    orders: Order = Order.query.filter_by(
+    orders: list[Order] = Order.query.filter_by(
         user_id=user_id).order_by(Order.created_at.desc()).all()
 
     return jsonify([order.to_dict() for order in orders]), 200
@@ -21,9 +22,9 @@ def get_user_orders():
 
 @bp.route('/<int:id>', methods=['GET'])
 @jwt_required()
-def get_order(id):
-    user_id = int(get_jwt_identity())
-    order: Order = Order.query.get(id)
+def get_order(id: int) -> Tuple[Response, int]:
+    user_id: int = int(get_jwt_identity())
+    order: Order | None = Order.query.get(id)
 
     if not order:
         return jsonify({'error': 'No se encontro ese pedido'}), 404
@@ -36,21 +37,21 @@ def get_order(id):
 
 @bp.route('/', methods=['POST'])
 @jwt_required()
-def create_order():
-    user_id = int(get_jwt_identity())
-    data = request.get_json()
+def create_order() -> Tuple[Response, int]:
+    user_id: int = int(get_jwt_identity())
+    data: dict = request.get_json()
 
     if not data or not data.get('items') or len(data['items']) == 0:
-        return jsonify({'error': 'El pedido debe tener mínimo un producto'}), 400
+        return jsonify({'error': 'El pedido debe tener m\u00ednimo un producto'}), 400
 
-    total = 0
-    validated_items = []
+    total: float = 0
+    validated_items: list[dict] = []
 
     for item in data['items']:
         if not item.get('product_id') or not item.get('quantity'):
             return jsonify({'error': 'Cada item debe tener product_id y quantity'}), 400
 
-        product: Product = Product.query.get(item['product_id'])
+        product: Product | None = Product.query.get(item['product_id'])
 
         if not product:
             return jsonify({'error': f"Producto con id {item['product_id']} no encontrado"}), 404
@@ -99,21 +100,21 @@ def create_order():
 
 @bp.route('/<int:id>/status', methods=['PUT'])
 @jwt_required()
-def update_order_status(id):
-    order = Order.query.get(id)
+def update_order_status(id: int) -> Tuple[Response, int]:
+    order: Order | None = Order.query.get(id)
 
     if not order:
         return jsonify({'error': 'Pedido no encontrado'}), 404
 
-    data = request.get_json()
+    data: dict = request.get_json()
 
     if not data or not data.get('status'):
         return jsonify({'error': 'El campo status es requerido'}), 400
 
-    valid_statuses = ['pending', 'processing',
-                      'shipped', 'delivered', 'cancelled']
+    valid_statuses: list[str] = ['pending', 'processing',
+                                 'shipped', 'delivered', 'cancelled']
     if data['status'] not in valid_statuses:
-        return jsonify({'error': f'Estado inválido. Valores permitidos: {", ".join(valid_statuses)}'}), 400
+        return jsonify({'error': f'Estado inv\u00e1lido. Valores permitidos: {", ".join(valid_statuses)}'}), 400
 
     order.status = data['status']
     db.session.commit()
@@ -126,10 +127,10 @@ def update_order_status(id):
 
 @bp.route('/<int:id>', methods=['DELETE'])
 @jwt_required()
-def cancel_order(id):
-    user_id = int(get_jwt_identity())
+def cancel_order(id: int) -> Tuple[Response, int]:
+    user_id: int = int(get_jwt_identity())
 
-    order = Order.query.get(id)
+    order: Order | None = Order.query.get(id)
 
     if not order:
         return jsonify({'error': 'Pedido no encontrado'}), 404
@@ -140,9 +141,10 @@ def cancel_order(id):
     if order.status != 'pending':
         return jsonify({'error': f'No se puede cancelar un pedido en estado "{order.status}"'}), 400
 
-    order_items = OrderItem.query.filter_by(order_id=order.id).all()
+    order_items: list[OrderItem] = OrderItem.query.filter_by(
+        order_id=order.id).all()
     for item in order_items:
-        product = Product.query.get(item.product_id)
+        product: Product | None = Product.query.get(item.product_id)
         if product:
             product.stock += item.quantity
 

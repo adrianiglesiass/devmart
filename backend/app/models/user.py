@@ -13,13 +13,13 @@ class User(db.Model):
     created_at = db.Column(
         db.DateTime, default=lambda: datetime.now(timezone.utc))
 
-    def set_password(self, password):
+    def set_password(self, password: str) -> None:
         self.password_hash = generate_password_hash(password)
 
-    def check_password(self, password):
+    def check_password(self, password: str) -> bool:
         return check_password_hash(self.password_hash, password)
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         return {
             'id': self.id,
             'username': self.username,
@@ -27,5 +27,5 @@ class User(db.Model):
             'created_at': self.created_at.isoformat()
         }
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<User {self.id}: {self.username} ({self.email})>"

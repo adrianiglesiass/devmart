@@ -29,5 +29,19 @@ class Order(db.Model):
             'items': [item.to_dict() for item in items]
         }
 
-    def __repr__(self):
+    def to_dict(self) -> dict:
+        from app.models.order_item import OrderItem
+
+        items = OrderItem.query.filter_by(order_id=self.id).all()
+
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'total': self.total,
+            'status': self.status,
+            'created_at': self.created_at.isoformat(),
+            'items': [item.to_dict() for item in items]
+        }
+
+    def __repr__(self) -> str:
         return f"<Order {self.id}: User {self.user_id} - ${self.total}>"

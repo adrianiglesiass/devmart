@@ -18,5 +18,13 @@ class Category(db.Model):
             'products': [product.to_dict() for product in self.products]
         }
 
-    def __repr__(self):
+    def to_dict(self) -> dict:
+        return {
+            'id': self.id,
+            'name': self.name,
+            'description': self.description,
+            'products': [product.to_dict() for product in self.products]
+        }
+
+    def __repr__(self) -> str:
         return f"<Category {self.id}: {self.name}>"
