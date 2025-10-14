@@ -11,12 +11,79 @@ bp = Blueprint('products', __name__, url_prefix='/products')
 
 @bp.route('/', methods=['GET'])
 def get_products() -> Tuple[Response, int]:
+    """
+    Get all products
+    ---
+    tags:
+      - Products
+    responses:
+      200:
+        description: List of all products
+        schema:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+              description:
+                type: string
+              price:
+                type: number
+              stock:
+                type: integer
+              category_id:
+                type: integer
+              image_url:
+                type: string
+    """
     products: list[Product] = Product.query.all()
     return jsonify([product.to_dict() for product in products]), 200
 
 
 @bp.route('/<int:id>', methods=['GET'])
 def get_product(id: int) -> Tuple[Response, int]:
+    """
+    Get a specific product by ID
+    ---
+    tags:
+      - Products
+    parameters:
+      - in: path
+        name: id
+        type: integer
+        required: true
+        description: Product ID
+    responses:
+      200:
+        description: Product details
+        schema:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            description:
+              type: string
+            price:
+              type: number
+            stock:
+              type: integer
+            category_id:
+              type: integer
+            image_url:
+              type: string
+      404:
+        description: Product not found
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+    """
     product: Product | None = Product.query.get(id)
 
     if not product:
@@ -29,6 +96,82 @@ def get_product(id: int) -> Tuple[Response, int]:
 @jwt_required()
 @admin_required()
 def create_product() -> Tuple[Response, int]:
+    """
+    Create a new product
+    ---
+    tags:
+      - Products
+    security:
+      - Bearer: []
+    parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          required:
+            - name
+            - price
+          properties:
+            name:
+              type: string
+            description:
+              type: string
+            price:
+              type: number
+            stock:
+              type: integer
+            category_id:
+              type: integer
+            image_url:
+              type: string
+    responses:
+      201:
+        description: Product created successfully
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+            product:
+              type: object
+              properties:
+                id:
+                  type: integer
+                name:
+                  type: string
+                description:
+                  type: string
+                price:
+                  type: number
+                stock:
+                  type: integer
+                category_id:
+                  type: integer
+                image_url:
+                  type: string
+      400:
+        description: Missing required fields or category not found
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+      403:
+        description: Admin permission required
+        schema:
+          type: object
+          properties:
+            msg:
+              type: string
+      404:
+        description: Category not found
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+    """
     data: dict = request.get_json()
 
     if not data or not data.get('name') or not data.get('price'):
@@ -61,6 +204,77 @@ def create_product() -> Tuple[Response, int]:
 @jwt_required()
 @admin_required()
 def update_product(id: int) -> Tuple[Response, int]:
+    """
+    Update an existing product
+    ---
+    tags:
+      - Products
+    security:
+      - Bearer: []
+    parameters:
+      - in: path
+        name: id
+        type: integer
+        required: true
+        description: Product ID
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          properties:
+            name:
+              type: string
+            description:
+              type: string
+            price:
+              type: number
+            stock:
+              type: integer
+            category_id:
+              type: integer
+            image_url:
+              type: string
+    responses:
+      200:
+        description: Product updated successfully
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+            product:
+              type: object
+              properties:
+                id:
+                  type: integer
+                name:
+                  type: string
+                description:
+                  type: string
+                price:
+                  type: number
+                stock:
+                  type: integer
+                category_id:
+                  type: integer
+                image_url:
+                  type: string
+      403:
+        description: Admin permission required
+        schema:
+          type: object
+          properties:
+            msg:
+              type: string
+      404:
+        description: Product not found
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+    """
     product: Product | None = Product.query.get(id)
 
     if not product:
@@ -93,6 +307,42 @@ def update_product(id: int) -> Tuple[Response, int]:
 @jwt_required()
 @admin_required()
 def delete_product(id: int) -> Tuple[Response, int]:
+    """
+    Delete a product
+    ---
+    tags:
+      - Products
+    security:
+      - Bearer: []
+    parameters:
+      - in: path
+        name: id
+        type: integer
+        required: true
+        description: Product ID
+    responses:
+      200:
+        description: Product deleted successfully
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+      403:
+        description: Admin permission required
+        schema:
+          type: object
+          properties:
+            msg:
+              type: string
+      404:
+        description: Product not found
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+    """
     product: Product | None = Product.query.get(id)
 
     if not product:

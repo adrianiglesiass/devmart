@@ -13,6 +13,56 @@ bp = Blueprint('orders', __name__, url_prefix='/orders')
 @bp.route('/', methods=['GET'])
 @jwt_required()
 def get_user_orders() -> Tuple[Response, int]:
+    """
+    Get all orders for the authenticated user
+    ---
+    tags:
+      - Orders
+    security:
+      - Bearer: []
+    responses:
+      200:
+        description: List of user orders
+        schema:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              user_id:
+                type: integer
+              total:
+                type: number
+              status:
+                type: string
+                enum: [pending, processing, shipped, delivered, cancelled]
+              created_at:
+                type: string
+                format: date-time
+              items:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    product_id:
+                      type: integer
+                    quantity:
+                      type: integer
+                    price:
+                      type: number
+                    product:
+                      type: object
+      401:
+        description: Authentication required
+        schema:
+          type: object
+          properties:
+            msg:
+              type: string
+    """
     user_id: int = int(get_jwt_identity())
 
     orders: list[Order] = Order.query.filter_by(
@@ -24,6 +74,74 @@ def get_user_orders() -> Tuple[Response, int]:
 @bp.route('/<int:id>', methods=['GET'])
 @jwt_required()
 def get_order(id: int) -> Tuple[Response, int]:
+    """
+    Get a specific order by ID
+    ---
+    tags:
+      - Orders
+    security:
+      - Bearer: []
+    parameters:
+      - in: path
+        name: id
+        type: integer
+        required: true
+        description: Order ID
+    responses:
+      200:
+        description: Order details
+        schema:
+          type: object
+          properties:
+            id:
+              type: integer
+            user_id:
+              type: integer
+            total:
+              type: number
+            status:
+              type: string
+              enum: [pending, processing, shipped, delivered, cancelled]
+            created_at:
+              type: string
+              format: date-time
+            items:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  product_id:
+                    type: integer
+                  quantity:
+                    type: integer
+                  price:
+                    type: number
+                  product:
+                    type: object
+      401:
+        description: Authentication required
+        schema:
+          type: object
+          properties:
+            msg:
+              type: string
+      403:
+        description: Permission denied for this order
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+      404:
+        description: Order not found
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+    """
     user_id: int = int(get_jwt_identity())
     order: Order | None = Order.query.get(id)
 
@@ -40,11 +158,105 @@ def get_order(id: int) -> Tuple[Response, int]:
 @jwt_required()
 @admin_required()
 def create_order() -> Tuple[Response, int]:
+    """
+    Create a new order
+    ---
+    tags:
+      - Orders
+    security:
+      - Bearer: []
+    parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          required:
+            - items
+          properties:
+            items:
+              type: array
+              items:
+                type: object
+                required:
+                  - product_id
+                  - quantity
+                properties:
+                  product_id:
+                    type: integer
+                  quantity:
+                    type: integer
+            status:
+              type: string
+              enum: [pending, processing, shipped, delivered, cancelled]
+              default: pending
+    responses:
+      201:
+        description: Order created successfully
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+            order:
+              type: object
+              properties:
+                id:
+                  type: integer
+                user_id:
+                  type: integer
+                total:
+                  type: number
+                status:
+                  type: string
+                created_at:
+                  type: string
+                  format: date-time
+                items:
+                  type: array
+                  items:
+                    type: object
+      400:
+        description: Invalid order data or insufficient stock
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+      401:
+        description: Authentication required
+        schema:
+          type: object
+          properties:
+            msg:
+              type: string
+      403:
+        description: Admin permission required
+        schema:
+          type: object
+          properties:
+            msg:
+              type: string
+      404:
+        description: Product not found
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+      500:
+        description: Internal server error
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+    """
     user_id: int = int(get_jwt_identity())
     data: dict = request.get_json()
 
     if not data or not data.get('items') or len(data['items']) == 0:
-        return jsonify({'error': 'El pedido debe tener m\u00ednimo un producto'}), 400
+        return jsonify({'error': 'El pedido debe tener mínimo un producto'}), 400
 
     total: float = 0
     validated_items: list[dict] = []
@@ -103,6 +315,74 @@ def create_order() -> Tuple[Response, int]:
 @bp.route('/<int:id>/status', methods=['PUT'])
 @jwt_required()
 def update_order_status(id: int) -> Tuple[Response, int]:
+    """
+    Update order status
+    ---
+    tags:
+      - Orders
+    security:
+      - Bearer: []
+    parameters:
+      - in: path
+        name: id
+        type: integer
+        required: true
+        description: Order ID
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          required:
+            - status
+          properties:
+            status:
+              type: string
+              enum: [pending, processing, shipped, delivered, cancelled]
+    responses:
+      200:
+        description: Order status updated successfully
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+            order:
+              type: object
+              properties:
+                id:
+                  type: integer
+                user_id:
+                  type: integer
+                total:
+                  type: number
+                status:
+                  type: string
+                created_at:
+                  type: string
+                  format: date-time
+      400:
+        description: Invalid status or missing data
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+      401:
+        description: Authentication required
+        schema:
+          type: object
+          properties:
+            msg:
+              type: string
+      404:
+        description: Order not found
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+    """
     order: Order | None = Order.query.get(id)
 
     if not order:
@@ -116,7 +396,7 @@ def update_order_status(id: int) -> Tuple[Response, int]:
     valid_statuses: list[str] = ['pending', 'processing',
                                  'shipped', 'delivered', 'cancelled']
     if data['status'] not in valid_statuses:
-        return jsonify({'error': f'Estado inv\u00e1lido. Valores permitidos: {", ".join(valid_statuses)}'}), 400
+        return jsonify({'error': f'Estado inválido. Valores permitidos: {", ".join(valid_statuses)}'}), 400
 
     order.status = data['status']
     db.session.commit()
@@ -130,6 +410,56 @@ def update_order_status(id: int) -> Tuple[Response, int]:
 @bp.route('/<int:id>', methods=['DELETE'])
 @jwt_required()
 def cancel_order(id: int) -> Tuple[Response, int]:
+    """
+    Cancel an order and restore stock
+    ---
+    tags:
+      - Orders
+    security:
+      - Bearer: []
+    parameters:
+      - in: path
+        name: id
+        type: integer
+        required: true
+        description: Order ID
+    responses:
+      200:
+        description: Order cancelled and stock restored
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+      400:
+        description: Cannot cancel order in current status
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+      401:
+        description: Authentication required
+        schema:
+          type: object
+          properties:
+            msg:
+              type: string
+      403:
+        description: Permission denied for this order
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+      404:
+        description: Order not found
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+    """
     user_id: int = int(get_jwt_identity())
 
     order: Order | None = Order.query.get(id)
