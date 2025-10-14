@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify, Response
 from flask_jwt_extended import jwt_required
+from app.utils.decorators import admin_required
 from app.extensions import db
 from app.models.category import Category
 from app.models.product import Product
@@ -42,6 +43,7 @@ def get_category_products(id: int) -> Tuple[Response, int]:
 
 @bp.route('/', methods=['POST'])
 @jwt_required()
+@admin_required()
 def create_category() -> Tuple[Response, int]:
     data: dict = request.get_json()
 
@@ -69,6 +71,7 @@ def create_category() -> Tuple[Response, int]:
 
 @bp.route('/<int:id>', methods=['PUT'])
 @jwt_required()
+@admin_required()
 def update_category(id: int) -> Tuple[Response, int]:
     category: Category | None = Category.query.get(id)
 
@@ -99,6 +102,7 @@ def update_category(id: int) -> Tuple[Response, int]:
 
 @bp.route('/<int:id>', methods=['DELETE'])
 @jwt_required()
+@admin_required()
 def delete_category(id: int) -> Tuple[Response, int]:
     category: Category | None = Category.query.get(id)
 
