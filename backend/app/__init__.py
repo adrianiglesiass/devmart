@@ -1,18 +1,17 @@
 from flask import Flask
-from .extensions import db, migrate, jwt, cors
-from .config import Config
+from flask_cors import CORS
+from app.extensions import db, jwt, migrate
+from app.config import config
 
 
-def create_app():
+def create_app(config_name='development'):
     app = Flask(__name__)
-    app.config.from_object(Config)
+    app.config.from_object(config[config_name])
 
+    CORS(app)
     db.init_app(app)
-    migrate.init_app(app, db)
     jwt.init_app(app)
-    cors.init_app(app)
-
-    from app.models import user, product, category, order, order_item
+    migrate.init_app(app, db)
 
     from app.routes import auth, products, categories, orders
     app.register_blueprint(auth.bp)
