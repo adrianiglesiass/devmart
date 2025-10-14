@@ -12,12 +12,63 @@ bp = Blueprint('categories', __name__, url_prefix='/categories')
 
 @bp.route('/', methods=['GET'])
 def get_categories() -> Tuple[Response, int]:
+    """
+    Get all categories
+    ---
+    tags:
+      - Categories
+    responses:
+      200:
+        description: List of all categories
+        schema:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+              description:
+                type: string
+    """
     categories: list[Category] = Category.query.all()
     return jsonify([category.to_dict() for category in categories]), 200
 
 
 @bp.route('/<int:id>', methods=['GET'])
 def get_category(id: int) -> Tuple[Response, int]:
+    """
+    Get a specific category by ID
+    ---
+    tags:
+      - Categories
+    parameters:
+      - in: path
+        name: id
+        type: integer
+        required: true
+        description: Category ID
+    responses:
+      200:
+        description: Category details
+        schema:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            description:
+              type: string
+      404:
+        description: Category not found
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+    """
     category: Category | None = Category.query.get(id)
 
     if not category:
@@ -28,6 +79,59 @@ def get_category(id: int) -> Tuple[Response, int]:
 
 @bp.route('/<int:id>/products', methods=['GET'])
 def get_category_products(id: int) -> Tuple[Response, int]:
+    """
+    Get all products in a specific category
+    ---
+    tags:
+      - Categories
+    parameters:
+      - in: path
+        name: id
+        type: integer
+        required: true
+        description: Category ID
+    responses:
+      200:
+        description: Category with its products
+        schema:
+          type: object
+          properties:
+            category:
+              type: object
+              properties:
+                id:
+                  type: integer
+                name:
+                  type: string
+                description:
+                  type: string
+            products:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  description:
+                    type: string
+                  price:
+                    type: number
+                  stock:
+                    type: integer
+                  category_id:
+                    type: integer
+                  image_url:
+                    type: string
+      404:
+        description: Category not found
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+    """
     category: Category | None = Category.query.get(id)
 
     if not category:
@@ -45,6 +149,65 @@ def get_category_products(id: int) -> Tuple[Response, int]:
 @jwt_required()
 @admin_required()
 def create_category() -> Tuple[Response, int]:
+    """
+    Create a new category
+    ---
+    tags:
+      - Categories
+    security:
+      - Bearer: []
+    parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          required:
+            - name
+          properties:
+            name:
+              type: string
+            description:
+              type: string
+    responses:
+      201:
+        description: Category created successfully
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+            category:
+              type: object
+              properties:
+                id:
+                  type: integer
+                name:
+                  type: string
+                description:
+                  type: string
+      400:
+        description: Missing required fields
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+      403:
+        description: Admin permission required
+        schema:
+          type: object
+          properties:
+            msg:
+              type: string
+      409:
+        description: Category already exists
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+    """
     data: dict = request.get_json()
 
     if not data or not data.get('name'):
@@ -73,6 +236,75 @@ def create_category() -> Tuple[Response, int]:
 @jwt_required()
 @admin_required()
 def update_category(id: int) -> Tuple[Response, int]:
+    """
+    Update an existing category
+    ---
+    tags:
+      - Categories
+    security:
+      - Bearer: []
+    parameters:
+      - in: path
+        name: id
+        type: integer
+        required: true
+        description: Category ID
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          properties:
+            name:
+              type: string
+            description:
+              type: string
+    responses:
+      200:
+        description: Category updated successfully
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+            category:
+              type: object
+              properties:
+                id:
+                  type: integer
+                name:
+                  type: string
+                description:
+                  type: string
+      400:
+        description: No data received for update
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+      403:
+        description: Admin permission required
+        schema:
+          type: object
+          properties:
+            msg:
+              type: string
+      404:
+        description: Category not found
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+      409:
+        description: Category name already exists
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+    """
     category: Category | None = Category.query.get(id)
 
     if not category:
@@ -104,6 +336,49 @@ def update_category(id: int) -> Tuple[Response, int]:
 @jwt_required()
 @admin_required()
 def delete_category(id: int) -> Tuple[Response, int]:
+    """
+    Delete a category
+    ---
+    tags:
+      - Categories
+    security:
+      - Bearer: []
+    parameters:
+      - in: path
+        name: id
+        type: integer
+        required: true
+        description: Category ID
+    responses:
+      200:
+        description: Category deleted successfully
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+      400:
+        description: Cannot delete category with associated products
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+      403:
+        description: Admin permission required
+        schema:
+          type: object
+          properties:
+            msg:
+              type: string
+      404:
+        description: Category not found
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+    """
     category: Category | None = Category.query.get(id)
 
     if not category:
