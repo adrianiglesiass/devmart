@@ -23,20 +23,23 @@ def create_app(config_name='development'):
     }
 
     swagger_template = {
-        "swagger": "2.0",
+        "openapi": "3.0.0",
         "info": {
             "title": "DevMart API",
             "description": "E-commerce REST API with JWT authentication and role-based access control",
-            "version": "1.0"
+            "version": "1.0.0"
         },
-        "securityDefinitions": {
-            "Bearer": {
-                "type": "apiKey",
-                "name": "Authorization",
-                "in": "header",
-                "description": "JWT token. Format: 'Bearer <token>'"
+        "components": {
+            "securitySchemes": {
+                "Bearer": {
+                    "type": "http",
+                    "scheme": "bearer",
+                    "bearerFormat": "JWT",
+                    "description": "JWT Authorization header using Bearer scheme"
+                }
             }
-        }
+        },
+        "security": [{"Bearer": []}]
     }
 
     Swagger(app, config=swagger_config, template=swagger_template)
