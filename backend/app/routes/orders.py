@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify, Response
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from app.utils.decorators import admin_required
 from app.extensions import db
 from app.models.order import Order
 from app.models.order_item import OrderItem
@@ -37,6 +38,7 @@ def get_order(id: int) -> Tuple[Response, int]:
 
 @bp.route('/', methods=['POST'])
 @jwt_required()
+@admin_required()
 def create_order() -> Tuple[Response, int]:
     user_id: int = int(get_jwt_identity())
     data: dict = request.get_json()

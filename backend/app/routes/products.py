@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify, Response
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required
+from app.utils.decorators import admin_required
 from app.extensions import db
 from app.models.product import Product
 from app.models.category import Category
@@ -26,6 +27,7 @@ def get_product(id: int) -> Tuple[Response, int]:
 
 @bp.route('/', methods=['POST'])
 @jwt_required()
+@admin_required()
 def create_product() -> Tuple[Response, int]:
     data: dict = request.get_json()
 
@@ -57,6 +59,7 @@ def create_product() -> Tuple[Response, int]:
 
 @bp.route('/<int:id>', methods=['PUT'])
 @jwt_required()
+@admin_required()
 def update_product(id: int) -> Tuple[Response, int]:
     product: Product | None = Product.query.get(id)
 
@@ -88,6 +91,7 @@ def update_product(id: int) -> Tuple[Response, int]:
 
 @bp.route('/<int:id>', methods=['DELETE'])
 @jwt_required()
+@admin_required()
 def delete_product(id: int) -> Tuple[Response, int]:
     product: Product | None = Product.query.get(id)
 
