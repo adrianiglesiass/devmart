@@ -1,17 +1,51 @@
-import { useAuth } from './context/AuthContext';
+import { Navigate, Route, Routes } from 'react-router-dom';
+
+import { useAuth } from '@/context/AuthContext';
+import AdminPanel from '@/pages/admin/AdminPanel';
+import Login from '@/pages/auth/Login';
+import Home from '@/pages/public/Home';
+import { ProtectedRoute } from '@/routes/ProtectedRoute';
 
 function App() {
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const { isLoading } = useAuth();
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div>Cargando aplicación...</div>;
   }
 
   return (
-    <>
-      <h1>DevMart</h1>
-      {isAuthenticated ? <p>Bienvenido, {user?.email}!</p> : <p>No autenticado</p>}
-    </>
+    <Routes>
+      {/* Rutas públicas */}
+      <Route
+        path="/"
+        element={<Home />}
+      />
+      <Route
+        path="/login"
+        element={<Login />}
+      />
+
+      {/*Requiere autenticación) */}
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute requireAdmin>
+            <AdminPanel />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Ruta 404 */}
+      <Route
+        path="*"
+        element={
+          <Navigate
+            to="/"
+            replace
+          />
+        }
+      />
+    </Routes>
   );
 }
 
