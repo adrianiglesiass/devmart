@@ -19,11 +19,11 @@ def create_app(config_name='development'):
         }],
         "static_url_path": "/flasgger_static",
         "swagger_ui": True,
-        "specs_route": "/docs"
+        "specs_route": "/docs",
+        "openapi": "3.0.0"
     }
 
     swagger_template = {
-        "openapi": "3.0.0",
         "info": {
             "title": "DevMart API",
             "description": "E-commerce REST API with JWT authentication and role-based access control",
