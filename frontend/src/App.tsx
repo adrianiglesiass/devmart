@@ -1,18 +1,11 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 
-import { useAuth } from '@/context/AuthContext';
 import AdminPanel from '@/pages/admin/AdminPanel';
 import Login from '@/pages/auth/Login';
 import Home from '@/pages/public/Home';
 import { ProtectedRoute } from '@/routes/ProtectedRoute';
 
 function App() {
-  const { isLoading } = useAuth();
-
-  if (isLoading) {
-    return <div>Cargando aplicación...</div>;
-  }
-
   return (
     <Routes>
       {/* Rutas públicas */}
