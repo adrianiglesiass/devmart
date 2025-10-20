@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { getAccessToken } from '@/api/config/auth.interceptor';
 import { authApi } from '@/api/services/auth.api';
-import type { LoginRequest, RegisterRequest, User } from '@/api/types';
+import type { LoginRequest, RegisterRequest, User } from '@/api/types/types';
 
 interface AuthContextType {
   user: User | null;
