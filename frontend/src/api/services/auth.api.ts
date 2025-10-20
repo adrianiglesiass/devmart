@@ -1,6 +1,6 @@
 import { setAccessToken } from '../config/auth.interceptor';
 import axiosInstance from '../config/axios';
-import type { AuthResponse, LoginRequest, RegisterRequest, User } from '../types';
+import type { AuthResponse, LoginRequest, RegisterRequest, User } from '../types/types';
 
 export const authApi = {
   async login(credentials: LoginRequest): Promise<AuthResponse> {
