@@ -15,20 +15,6 @@ class Order(db.Model):
     items = db.relationship('OrderItem', backref='order',
                             lazy=True, cascade='all, delete-orphan')
 
-    def to_dict(self):
-        from app.models.order_item import OrderItem
-
-        items = OrderItem.query.filter_by(order_id=self.id).all()
-
-        return {
-            'id': self.id,
-            'user_id': self.user_id,
-            'total': self.total,
-            'status': self.status,
-            'created_at': self.created_at.isoformat(),
-            'items': [item.to_dict() for item in items]
-        }
-
     def to_dict(self) -> dict:
         from app.models.order_item import OrderItem
 

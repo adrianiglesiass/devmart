@@ -14,61 +14,88 @@ def register() -> Tuple[Response, int]:
     ---
     tags:
       - Authentication
-    parameters:
-      - in: body
-        name: body
-        required: true
-        schema:
-          type: object
-          required:
-            - username
-            - email
-            - password
-          properties:
-            username:
-              type: string
-            email:
-              type: string
-              format: email
-            password:
-              type: string
-              minLength: 6
+    requestBody:
+      required: true
+      description: User registration data
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - username
+              - email
+              - password
+            properties:
+              username:
+                type: string
+                minLength: 3
+                maxLength: 80
+                description: Unique username for the account
+                example: "john_doe"
+              email:
+                type: string
+                format: email
+                minLength: 5
+                maxLength: 120
+                description: Valid email address
+                example: "john.doe@example.com"
+              password:
+                type: string
+                minLength: 6
+                maxLength: 128
+                description: Password with at least 6 characters
+                example: "securePassword123"
     responses:
       201:
         description: User registered successfully
-        schema:
-          type: object
-          properties:
-            message:
-              type: string
-            user:
+        content:
+          application/json:
+            schema:
               type: object
               properties:
-                id:
-                  type: integer
-                username:
+                message:
                   type: string
-                email:
-                  type: string
-                role:
-                  type: string
-                created_at:
-                  type: string
-                  format: date-time
+                  example: "Usuario creado exitosamente"
+                user:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                    username:
+                      type: string
+                      example: "john_doe"
+                    email:
+                      type: string
+                      example: "john.doe@example.com"
+                    role:
+                      type: string
+                      enum: [customer, admin]
+                      example: "customer"
+                    created_at:
+                      type: string
+                      format: date-time
+                      example: "2025-10-20T10:30:00.000000"
       400:
         description: Missing required fields
-        schema:
-          type: object
-          properties:
-            error:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "Faltan campos requeridos"
       409:
         description: Username or email already exists
-        schema:
-          type: object
-          properties:
-            error:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "Este usuario ya existe"
     """
     data = request.get_json()
 
@@ -100,59 +127,81 @@ def login() -> Tuple[Response, int]:
     ---
     tags:
       - Authentication
-    parameters:
-      - in: body
-        name: body
-        required: true
-        schema:
-          type: object
-          required:
-            - email
-            - password
-          properties:
-            email:
-              type: string
-              format: email
-            password:
-              type: string
+    requestBody:
+      required: true
+      description: User credentials
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - email
+              - password
+            properties:
+              email:
+                type: string
+                format: email
+                description: User's email address
+                example: "john.doe@example.com"
+              password:
+                type: string
+                description: User's password
+                example: "securePassword123"
     responses:
       200:
         description: User authenticated successfully
-        schema:
-          type: object
-          properties:
-            message:
-              type: string
-            access_token:
-              type: string
-            user:
+        content:
+          application/json:
+            schema:
               type: object
               properties:
-                id:
-                  type: integer
-                username:
+                message:
                   type: string
-                email:
+                  example: "Usuario identificado correctamente"
+                access_token:
                   type: string
-                role:
-                  type: string
-                created_at:
-                  type: string
-                  format: date-time
+                  description: JWT access token for authenticated requests
+                  example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                user:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                    username:
+                      type: string
+                      example: "john_doe"
+                    email:
+                      type: string
+                      example: "john.doe@example.com"
+                    role:
+                      type: string
+                      enum: [customer, admin]
+                      example: "customer"
+                    created_at:
+                      type: string
+                      format: date-time
+                      example: "2025-10-20T10:30:00.000000"
       400:
         description: Missing email or password
-        schema:
-          type: object
-          properties:
-            error:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "Email y contraseña requeridos"
       401:
         description: Invalid credentials
-        schema:
-          type: object
-          properties:
-            error:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "La contraseña introducida no es correcta"
     """
     data = request.get_json()
 
@@ -186,34 +235,49 @@ def get_current_user() -> Tuple[Response, int]:
     responses:
       200:
         description: Current user information
-        schema:
-          type: object
-          properties:
-            id:
-              type: integer
-            username:
-              type: string
-            email:
-              type: string
-            role:
-              type: string
-            created_at:
-              type: string
-              format: date-time
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  example: 1
+                username:
+                  type: string
+                  example: "john_doe"
+                email:
+                  type: string
+                  format: email
+                  example: "john.doe@example.com"
+                role:
+                  type: string
+                  enum: [customer, admin]
+                  example: "customer"
+                created_at:
+                  type: string
+                  format: date-time
+                  example: "2025-10-20T10:30:00.000000"
       401:
         description: Authentication required
-        schema:
-          type: object
-          properties:
-            msg:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                msg:
+                  type: string
+                  example: "Missing Authorization Header"
       404:
         description: User not found
-        schema:
-          type: object
-          properties:
-            error:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "Usuario no encontrado"
     """
     user_id: int = int(get_jwt_identity())
     user: User | None = User.query.get(user_id)

@@ -10,14 +10,6 @@ class Category(db.Model):
 
     products = db.relationship('Product', backref='category', lazy=True)
 
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'description': self.description,
-            'products': [product.to_dict() for product in self.products]
-        }
-
     def to_dict(self) -> dict:
         return {
             'id': self.id,

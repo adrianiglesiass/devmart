@@ -20,17 +20,37 @@ def get_categories() -> Tuple[Response, int]:
     responses:
       200:
         description: List of all categories
-        schema:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: integer
-              name:
-                type: string
-              description:
-                type: string
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  name:
+                    type: string
+                    example: "Electrónica"
+                  description:
+                    type: string
+                    example: "Productos electrónicos y tecnológicos"
+                  products:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        name:
+                          type: string
+                          example: "Laptop HP Pavilion"
+                        price:
+                          type: number
+                          format: float
+                          example: 899.99
     """
     categories: list[Category] = Category.query.all()
     return jsonify([category.to_dict() for category in categories]), 200
@@ -46,28 +66,53 @@ def get_category(id: int) -> Tuple[Response, int]:
     parameters:
       - in: path
         name: id
-        type: integer
+        schema:
+          type: integer
         required: true
-        description: Category ID
+        description: Category unique identifier
+        example: 1
     responses:
       200:
         description: Category details
-        schema:
-          type: object
-          properties:
-            id:
-              type: integer
-            name:
-              type: string
-            description:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  example: 1
+                name:
+                  type: string
+                  example: "Electrónica"
+                description:
+                  type: string
+                  example: "Productos electrónicos y tecnológicos"
+                products:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: "Laptop HP Pavilion"
+                      price:
+                        type: number
+                        format: float
+                        example: 899.99
       404:
         description: Category not found
-        schema:
-          type: object
-          properties:
-            error:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "Categoria con id 1 no encontrada"
     """
     category: Category | None = Category.query.get(id)
 
@@ -87,50 +132,77 @@ def get_category_products(id: int) -> Tuple[Response, int]:
     parameters:
       - in: path
         name: id
-        type: integer
+        schema:
+          type: integer
         required: true
         description: Category ID
+        example: 1
     responses:
       200:
         description: Category with its products
-        schema:
-          type: object
-          properties:
-            category:
+        content:
+          application/json:
+            schema:
               type: object
               properties:
-                id:
-                  type: integer
-                name:
-                  type: string
-                description:
-                  type: string
-            products:
-              type: array
-              items:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                  name:
-                    type: string
-                  description:
-                    type: string
-                  price:
-                    type: number
-                  stock:
-                    type: integer
-                  category_id:
-                    type: integer
-                  image_url:
-                    type: string
+                category:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                    name:
+                      type: string
+                      example: "Electrónica"
+                    description:
+                      type: string
+                      example: "Productos electrónicos y tecnológicos"
+                    products:
+                      type: array
+                      items:
+                        type: object
+                products:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: "Laptop HP Pavilion"
+                      description:
+                        type: string
+                        example: "Laptop de alto rendimiento"
+                      price:
+                        type: number
+                        format: float
+                        example: 899.99
+                      stock:
+                        type: integer
+                        example: 25
+                      category_id:
+                        type: integer
+                        example: 1
+                      image_url:
+                        type: string
+                        format: uri
+                        example: "https://example.com/images/laptop.jpg"
+                      created_at:
+                        type: string
+                        format: date-time
+                        example: "2025-10-20T10:30:00.000000"
       404:
         description: Category not found
-        schema:
-          type: object
-          properties:
-            error:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "Categoria con id 1 no encontrada"
     """
     category: Category | None = Category.query.get(id)
 
@@ -156,57 +228,94 @@ def create_category() -> Tuple[Response, int]:
       - Categories
     security:
       - Bearer: []
-    parameters:
-      - in: body
-        name: body
-        required: true
-        schema:
-          type: object
-          required:
-            - name
-          properties:
-            name:
-              type: string
-            description:
-              type: string
+    requestBody:
+      required: true
+      description: Category data
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - name
+            properties:
+              name:
+                type: string
+                minLength: 1
+                maxLength: 100
+                description: Unique category name
+                example: "Electrónica"
+              description:
+                type: string
+                description: Category description
+                example: "Productos electrónicos y tecnológicos"
     responses:
       201:
         description: Category created successfully
-        schema:
-          type: object
-          properties:
-            message:
-              type: string
-            category:
+        content:
+          application/json:
+            schema:
               type: object
               properties:
-                id:
-                  type: integer
-                name:
+                message:
                   type: string
-                description:
-                  type: string
+                  example: "Categoria creada correctamente"
+                category:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                    name:
+                      type: string
+                      example: "Electrónica"
+                    description:
+                      type: string
+                      example: "Productos electrónicos y tecnológicos"
+                    products:
+                      type: array
+                      items:
+                        type: object
+                      example: []
       400:
         description: Missing required fields
-        schema:
-          type: object
-          properties:
-            error:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "Es necesario un nombre"
+      401:
+        description: Authentication required
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                msg:
+                  type: string
+                  example: "Missing Authorization Header"
       403:
         description: Admin permission required
-        schema:
-          type: object
-          properties:
-            msg:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                msg:
+                  type: string
+                  example: "Requiere permisos de administrador"
       409:
         description: Category already exists
-        schema:
-          type: object
-          properties:
-            error:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "Esta categoria ya existe"
     """
     data: dict = request.get_json()
 
@@ -246,64 +355,104 @@ def update_category(id: int) -> Tuple[Response, int]:
     parameters:
       - in: path
         name: id
-        type: integer
-        required: true
-        description: Category ID
-      - in: body
-        name: body
-        required: true
         schema:
-          type: object
-          properties:
-            name:
-              type: string
-            description:
-              type: string
+          type: integer
+        required: true
+        description: Category ID to update
+        example: 1
+    requestBody:
+      required: true
+      description: Fields to update (all optional)
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                minLength: 1
+                maxLength: 100
+                example: "Tecnología"
+              description:
+                type: string
+                example: "Nueva descripción de la categoría"
     responses:
       200:
         description: Category updated successfully
-        schema:
-          type: object
-          properties:
-            message:
-              type: string
-            category:
+        content:
+          application/json:
+            schema:
               type: object
               properties:
-                id:
-                  type: integer
-                name:
+                message:
                   type: string
-                description:
-                  type: string
+                  example: "Categoria actualizada correctamente"
+                category:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                    name:
+                      type: string
+                      example: "Tecnología"
+                    description:
+                      type: string
+                      example: "Nueva descripción de la categoría"
+                    products:
+                      type: array
+                      items:
+                        type: object
       400:
         description: No data received for update
-        schema:
-          type: object
-          properties:
-            error:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "No se recibieron datos para actualizar"
+      401:
+        description: Authentication required
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                msg:
+                  type: string
+                  example: "Missing Authorization Header"
       403:
         description: Admin permission required
-        schema:
-          type: object
-          properties:
-            msg:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                msg:
+                  type: string
+                  example: "Requiere permisos de administrador"
       404:
         description: Category not found
-        schema:
-          type: object
-          properties:
-            error:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "Categoria con id 1 no encontrada"
       409:
         description: Category name already exists
-        schema:
-          type: object
-          properties:
-            error:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "Esta categoria ya existe"
     """
     category: Category | None = Category.query.get(id)
 
@@ -346,38 +495,62 @@ def delete_category(id: int) -> Tuple[Response, int]:
     parameters:
       - in: path
         name: id
-        type: integer
+        schema:
+          type: integer
         required: true
-        description: Category ID
+        description: Category ID to delete
+        example: 1
     responses:
       200:
         description: Category deleted successfully
-        schema:
-          type: object
-          properties:
-            message:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Categoria eliminada correctamente"
       400:
         description: Cannot delete category with associated products
-        schema:
-          type: object
-          properties:
-            error:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "No se puede eliminar. Hay 5 producto(s) asociados a esta categoria"
+      401:
+        description: Authentication required
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                msg:
+                  type: string
+                  example: "Missing Authorization Header"
       403:
         description: Admin permission required
-        schema:
-          type: object
-          properties:
-            msg:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                msg:
+                  type: string
+                  example: "Requiere permisos de administrador"
       404:
         description: Category not found
-        schema:
-          type: object
-          properties:
-            error:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "Categoria no encontrada"
     """
     category: Category | None = Category.query.get(id)
 
