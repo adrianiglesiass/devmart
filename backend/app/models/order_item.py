@@ -14,19 +14,6 @@ class OrderItem(db.Model):
 
     product = db.relationship('Product')
 
-    def to_dict(self):
-        from app.models.product import Product
-
-        product = Product.query.get(self.product_id)
-        return {
-            'id': self.id,
-            'order_id': self.order_id,
-            'product_id': self.product_id,
-            'quantity': self.quantity,
-            'price': self.price,
-            'subtotal': self.quantity * self.price
-        }
-
     def to_dict(self) -> dict:
         from app.models.product import Product
 

@@ -19,25 +19,40 @@ def get_products() -> Tuple[Response, int]:
     responses:
       200:
         description: List of all products
-        schema:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: integer
-              name:
-                type: string
-              description:
-                type: string
-              price:
-                type: number
-              stock:
-                type: integer
-              category_id:
-                type: integer
-              image_url:
-                type: string
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  name:
+                    type: string
+                    example: "Laptop HP Pavilion"
+                  description:
+                    type: string
+                    example: "Laptop de alto rendimiento con 16GB RAM"
+                  price:
+                    type: number
+                    format: float
+                    example: 899.99
+                  stock:
+                    type: integer
+                    example: 25
+                  category_id:
+                    type: integer
+                    example: 1
+                  image_url:
+                    type: string
+                    format: uri
+                    example: "https://example.com/images/laptop.jpg"
+                  created_at:
+                    type: string
+                    format: date-time
+                    example: "2025-10-20T10:30:00.000000"
     """
     products: list[Product] = Product.query.all()
     return jsonify([product.to_dict() for product in products]), 200
@@ -53,36 +68,56 @@ def get_product(id: int) -> Tuple[Response, int]:
     parameters:
       - in: path
         name: id
-        type: integer
+        schema:
+          type: integer
         required: true
-        description: Product ID
+        description: Unique product identifier
+        example: 1
     responses:
       200:
         description: Product details
-        schema:
-          type: object
-          properties:
-            id:
-              type: integer
-            name:
-              type: string
-            description:
-              type: string
-            price:
-              type: number
-            stock:
-              type: integer
-            category_id:
-              type: integer
-            image_url:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  example: 1
+                name:
+                  type: string
+                  example: "Laptop HP Pavilion"
+                description:
+                  type: string
+                  example: "Laptop de alto rendimiento con 16GB RAM"
+                price:
+                  type: number
+                  format: float
+                  example: 899.99
+                stock:
+                  type: integer
+                  example: 25
+                category_id:
+                  type: integer
+                  example: 1
+                image_url:
+                  type: string
+                  format: uri
+                  example: "https://example.com/images/laptop.jpg"
+                created_at:
+                  type: string
+                  format: date-time
+                  example: "2025-10-20T10:30:00.000000"
       404:
         description: Product not found
-        schema:
-          type: object
-          properties:
-            error:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "Producto no encontrado"
     """
     product: Product | None = Product.query.get(id)
 
@@ -103,74 +138,128 @@ def create_product() -> Tuple[Response, int]:
       - Products
     security:
       - Bearer: []
-    parameters:
-      - in: body
-        name: body
-        required: true
-        schema:
-          type: object
-          required:
-            - name
-            - price
-          properties:
-            name:
-              type: string
-            description:
-              type: string
-            price:
-              type: number
-            stock:
-              type: integer
-            category_id:
-              type: integer
-            image_url:
-              type: string
+    requestBody:
+      required: true
+      description: Product data
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - name
+              - price
+            properties:
+              name:
+                type: string
+                minLength: 1
+                maxLength: 200
+                description: Product name
+                example: "Laptop HP Pavilion"
+              description:
+                type: string
+                description: Detailed product description
+                example: "Laptop de alto rendimiento con 16GB RAM y SSD 512GB"
+              price:
+                type: number
+                format: float
+                minimum: 0.01
+                description: Product price in dollars
+                example: 899.99
+              stock:
+                type: integer
+                minimum: 0
+                default: 0
+                description: Available stock quantity
+                example: 25
+              category_id:
+                type: integer
+                description: Category identifier (must exist)
+                example: 1
+              image_url:
+                type: string
+                format: uri
+                description: URL to product image
+                example: "https://example.com/images/laptop.jpg"
     responses:
       201:
         description: Product created successfully
-        schema:
-          type: object
-          properties:
-            message:
-              type: string
-            product:
+        content:
+          application/json:
+            schema:
               type: object
               properties:
-                id:
-                  type: integer
-                name:
+                message:
                   type: string
-                description:
-                  type: string
-                price:
-                  type: number
-                stock:
-                  type: integer
-                category_id:
-                  type: integer
-                image_url:
-                  type: string
+                  example: "Producto creado correctamente"
+                product:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                    name:
+                      type: string
+                      example: "Laptop HP Pavilion"
+                    description:
+                      type: string
+                      example: "Laptop de alto rendimiento con 16GB RAM"
+                    price:
+                      type: number
+                      format: float
+                      example: 899.99
+                    stock:
+                      type: integer
+                      example: 25
+                    category_id:
+                      type: integer
+                      example: 1
+                    image_url:
+                      type: string
+                      example: "https://example.com/images/laptop.jpg"
+                    created_at:
+                      type: string
+                      format: date-time
+                      example: "2025-10-20T10:30:00.000000"
       400:
         description: Missing required fields or category not found
-        schema:
-          type: object
-          properties:
-            error:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "Faltan campos para poder crear el producto"
+      401:
+        description: Authentication required
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                msg:
+                  type: string
+                  example: "Missing Authorization Header"
       403:
         description: Admin permission required
-        schema:
-          type: object
-          properties:
-            msg:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                msg:
+                  type: string
+                  example: "Requiere permisos de administrador"
       404:
         description: Category not found
-        schema:
-          type: object
-          properties:
-            error:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "Categoria no encontrada"
     """
     data: dict = request.get_json()
 
@@ -214,66 +303,113 @@ def update_product(id: int) -> Tuple[Response, int]:
     parameters:
       - in: path
         name: id
-        type: integer
-        required: true
-        description: Product ID
-      - in: body
-        name: body
-        required: true
         schema:
-          type: object
-          properties:
-            name:
-              type: string
-            description:
-              type: string
-            price:
-              type: number
-            stock:
-              type: integer
-            category_id:
-              type: integer
-            image_url:
-              type: string
+          type: integer
+        required: true
+        description: Product ID to update
+        example: 1
+    requestBody:
+      required: true
+      description: Fields to update (all optional)
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                minLength: 1
+                maxLength: 200
+                example: "Laptop HP Pavilion Updated"
+              description:
+                type: string
+                example: "Nueva descripción del producto"
+              price:
+                type: number
+                format: float
+                minimum: 0.01
+                example: 799.99
+              stock:
+                type: integer
+                minimum: 0
+                example: 30
+              category_id:
+                type: integer
+                example: 2
+              image_url:
+                type: string
+                format: uri
+                example: "https://example.com/images/laptop-new.jpg"
     responses:
       200:
         description: Product updated successfully
-        schema:
-          type: object
-          properties:
-            message:
-              type: string
-            product:
+        content:
+          application/json:
+            schema:
               type: object
               properties:
-                id:
-                  type: integer
-                name:
+                message:
                   type: string
-                description:
+                  example: "Producto actualizado correctamente"
+                product:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                    name:
+                      type: string
+                      example: "Laptop HP Pavilion Updated"
+                    description:
+                      type: string
+                      example: "Nueva descripción del producto"
+                    price:
+                      type: number
+                      format: float
+                      example: 799.99
+                    stock:
+                      type: integer
+                      example: 30
+                    category_id:
+                      type: integer
+                      example: 2
+                    image_url:
+                      type: string
+                      example: "https://example.com/images/laptop-new.jpg"
+                    created_at:
+                      type: string
+                      format: date-time
+                      example: "2025-10-20T10:30:00.000000"
+      401:
+        description: Authentication required
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                msg:
                   type: string
-                price:
-                  type: number
-                stock:
-                  type: integer
-                category_id:
-                  type: integer
-                image_url:
-                  type: string
+                  example: "Missing Authorization Header"
       403:
         description: Admin permission required
-        schema:
-          type: object
-          properties:
-            msg:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                msg:
+                  type: string
+                  example: "Requiere permisos de administrador"
       404:
         description: Product not found
-        schema:
-          type: object
-          properties:
-            error:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "No se encontro el producto con id 1"
     """
     product: Product | None = Product.query.get(id)
 
@@ -317,31 +453,52 @@ def delete_product(id: int) -> Tuple[Response, int]:
     parameters:
       - in: path
         name: id
-        type: integer
+        schema:
+          type: integer
         required: true
-        description: Product ID
+        description: Product ID to delete
+        example: 1
     responses:
       200:
         description: Product deleted successfully
-        schema:
-          type: object
-          properties:
-            message:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Producto eliminado correctamente"
+      401:
+        description: Authentication required
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                msg:
+                  type: string
+                  example: "Missing Authorization Header"
       403:
         description: Admin permission required
-        schema:
-          type: object
-          properties:
-            msg:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                msg:
+                  type: string
+                  example: "Requiere permisos de administrador"
       404:
         description: Product not found
-        schema:
-          type: object
-          properties:
-            error:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "No se encontro el producto con id 1"
     """
     product: Product | None = Product.query.get(id)
 

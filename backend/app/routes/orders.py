@@ -23,45 +23,63 @@ def get_user_orders() -> Tuple[Response, int]:
     responses:
       200:
         description: List of user orders
-        schema:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: integer
-              user_id:
-                type: integer
-              total:
-                type: number
-              status:
-                type: string
-                enum: [pending, processing, shipped, delivered, cancelled]
-              created_at:
-                type: string
-                format: date-time
+        content:
+          application/json:
+            schema:
+              type: array
               items:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                    product_id:
-                      type: integer
-                    quantity:
-                      type: integer
-                    price:
-                      type: number
-                    product:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  user_id:
+                    type: integer
+                    example: 1
+                  total:
+                    type: number
+                    format: float
+                    example: 149.99
+                  status:
+                    type: string
+                    enum: [pending, processing, shipped, delivered, cancelled]
+                    example: "pending"
+                  created_at:
+                    type: string
+                    format: date-time
+                    example: "2025-10-20T10:30:00.000000"
+                  items:
+                    type: array
+                    items:
                       type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        product_id:
+                          type: integer
+                          example: 1
+                        quantity:
+                          type: integer
+                          example: 2
+                        price:
+                          type: number
+                          format: float
+                          example: 74.99
+                        subtotal:
+                          type: number
+                          format: float
+                          example: 149.98
       401:
         description: Authentication required
-        schema:
-          type: object
-          properties:
-            msg:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                msg:
+                  type: string
+                  example: "Missing Authorization Header"
     """
     user_id: int = int(get_jwt_identity())
 
@@ -84,63 +102,89 @@ def get_order(id: int) -> Tuple[Response, int]:
     parameters:
       - in: path
         name: id
-        type: integer
+        schema:
+          type: integer
         required: true
         description: Order ID
+        example: 1
     responses:
       200:
         description: Order details
-        schema:
-          type: object
-          properties:
-            id:
-              type: integer
-            user_id:
-              type: integer
-            total:
-              type: number
-            status:
-              type: string
-              enum: [pending, processing, shipped, delivered, cancelled]
-            created_at:
-              type: string
-              format: date-time
-            items:
-              type: array
-              items:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                  product_id:
-                    type: integer
-                  quantity:
-                    type: integer
-                  price:
-                    type: number
-                  product:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  example: 1
+                user_id:
+                  type: integer
+                  example: 1
+                total:
+                  type: number
+                  format: float
+                  example: 149.99
+                status:
+                  type: string
+                  enum: [pending, processing, shipped, delivered, cancelled]
+                  example: "pending"
+                created_at:
+                  type: string
+                  format: date-time
+                  example: "2025-10-20T10:30:00.000000"
+                items:
+                  type: array
+                  items:
                     type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      product_id:
+                        type: integer
+                        example: 1
+                      quantity:
+                        type: integer
+                        example: 2
+                      price:
+                        type: number
+                        format: float
+                        example: 74.99
+                      subtotal:
+                        type: number
+                        format: float
+                        example: 149.98
       401:
         description: Authentication required
-        schema:
-          type: object
-          properties:
-            msg:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                msg:
+                  type: string
+                  example: "Missing Authorization Header"
       403:
         description: Permission denied for this order
-        schema:
-          type: object
-          properties:
-            error:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "No tienes permiso para este pedido"
       404:
         description: Order not found
-        schema:
-          type: object
-          properties:
-            error:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "No se encontro ese pedido"
     """
     user_id: int = int(get_jwt_identity())
     order: Order | None = Order.query.get(id)
@@ -165,92 +209,125 @@ def create_order() -> Tuple[Response, int]:
       - Orders
     security:
       - Bearer: []
-    parameters:
-      - in: body
-        name: body
-        required: true
-        schema:
-          type: object
-          required:
-            - items
-          properties:
-            items:
-              type: array
+    requestBody:
+      required: true
+      description: Order data
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - items
+            properties:
               items:
-                type: object
-                required:
-                  - product_id
-                  - quantity
-                properties:
-                  product_id:
-                    type: integer
-                  quantity:
-                    type: integer
-            status:
-              type: string
-              enum: [pending, processing, shipped, delivered, cancelled]
-              default: pending
+                type: array
+                minItems: 1
+                items:
+                  type: object
+                  required:
+                    - product_id
+                    - quantity
+                  properties:
+                    product_id:
+                      type: integer
+                      description: ID of the product to order
+                      example: 1
+                    quantity:
+                      type: integer
+                      minimum: 1
+                      description: Quantity to order
+                      example: 2
+              status:
+                type: string
+                enum: [pending, processing, shipped, delivered, cancelled]
+                default: pending
+                description: Initial order status
+                example: "pending"
     responses:
       201:
         description: Order created successfully
-        schema:
-          type: object
-          properties:
-            message:
-              type: string
-            order:
+        content:
+          application/json:
+            schema:
               type: object
               properties:
-                id:
-                  type: integer
-                user_id:
-                  type: integer
-                total:
-                  type: number
-                status:
+                message:
                   type: string
-                created_at:
-                  type: string
-                  format: date-time
-                items:
-                  type: array
-                  items:
-                    type: object
+                  example: "Pedido creado correctamente"
+                order:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                    user_id:
+                      type: integer
+                      example: 1
+                    total:
+                      type: number
+                      format: float
+                      example: 149.99
+                    status:
+                      type: string
+                      example: "pending"
+                    created_at:
+                      type: string
+                      format: date-time
+                      example: "2025-10-20T10:30:00.000000"
+                    items:
+                      type: array
+                      items:
+                        type: object
       400:
         description: Invalid order data or insufficient stock
-        schema:
-          type: object
-          properties:
-            error:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "El pedido debe tener mínimo un producto"
       401:
         description: Authentication required
-        schema:
-          type: object
-          properties:
-            msg:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                msg:
+                  type: string
+                  example: "Missing Authorization Header"
       403:
         description: Admin permission required
-        schema:
-          type: object
-          properties:
-            msg:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                msg:
+                  type: string
+                  example: "Requiere permisos de administrador"
       404:
         description: Product not found
-        schema:
-          type: object
-          properties:
-            error:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "Producto con id 1 no encontrado"
       500:
         description: Internal server error
-        schema:
-          type: object
-          properties:
-            error:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "Error al crear el pedido"
     """
     user_id: int = int(get_jwt_identity())
     data: dict = request.get_json()
@@ -325,63 +402,87 @@ def update_order_status(id: int) -> Tuple[Response, int]:
     parameters:
       - in: path
         name: id
-        type: integer
-        required: true
-        description: Order ID
-      - in: body
-        name: body
-        required: true
         schema:
-          type: object
-          required:
-            - status
-          properties:
-            status:
-              type: string
-              enum: [pending, processing, shipped, delivered, cancelled]
+          type: integer
+        required: true
+        description: Order ID to update
+        example: 1
+    requestBody:
+      required: true
+      description: New status for the order
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+            properties:
+              status:
+                type: string
+                enum: [pending, processing, shipped, delivered, cancelled]
+                description: New order status
+                example: "processing"
     responses:
       200:
         description: Order status updated successfully
-        schema:
-          type: object
-          properties:
-            message:
-              type: string
-            order:
+        content:
+          application/json:
+            schema:
               type: object
               properties:
-                id:
-                  type: integer
-                user_id:
-                  type: integer
-                total:
-                  type: number
-                status:
+                message:
                   type: string
-                created_at:
-                  type: string
-                  format: date-time
+                  example: "Estado del pedido actualizado"
+                order:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                    user_id:
+                      type: integer
+                      example: 1
+                    total:
+                      type: number
+                      format: float
+                      example: 149.99
+                    status:
+                      type: string
+                      example: "processing"
+                    created_at:
+                      type: string
+                      format: date-time
+                      example: "2025-10-20T10:30:00.000000"
       400:
         description: Invalid status or missing data
-        schema:
-          type: object
-          properties:
-            error:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "El campo status es requerido"
       401:
         description: Authentication required
-        schema:
-          type: object
-          properties:
-            msg:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                msg:
+                  type: string
+                  example: "Missing Authorization Header"
       404:
         description: Order not found
-        schema:
-          type: object
-          properties:
-            error:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "Pedido no encontrado"
     """
     order: Order | None = Order.query.get(id)
 
@@ -420,45 +521,62 @@ def cancel_order(id: int) -> Tuple[Response, int]:
     parameters:
       - in: path
         name: id
-        type: integer
+        schema:
+          type: integer
         required: true
-        description: Order ID
+        description: Order ID to cancel
+        example: 1
     responses:
       200:
         description: Order cancelled and stock restored
-        schema:
-          type: object
-          properties:
-            message:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Pedido cancelado y stock restaurado"
       400:
         description: Cannot cancel order in current status
-        schema:
-          type: object
-          properties:
-            error:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: 'No se puede cancelar un pedido en estado "processing"'
       401:
         description: Authentication required
-        schema:
-          type: object
-          properties:
-            msg:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                msg:
+                  type: string
+                  example: "Missing Authorization Header"
       403:
         description: Permission denied for this order
-        schema:
-          type: object
-          properties:
-            error:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "No tienes permiso para cancelar este pedido"
       404:
         description: Order not found
-        schema:
-          type: object
-          properties:
-            error:
-              type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "Pedido no encontrado"
     """
     user_id: int = int(get_jwt_identity())
 
