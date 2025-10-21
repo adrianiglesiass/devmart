@@ -32,7 +32,7 @@ export function ProductCard({ product }: ProductCardProps) {
         </p>
 
         <div className="flex items-center justify-between">
-          <p className="text-2xl font-bold text-blue-600">${product.price?.toFixed(2)}</p>
+          <p className="text-2xl font-bold text-blue-600">€{product.price?.toFixed(2)}</p>
           <p className="text-sm text-gray-500">Stock: {product.stock || 0}</p>
         </div>
       </CardContent>

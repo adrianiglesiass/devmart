@@ -19,8 +19,8 @@ export default function Home() {
           />
 
           <CategoryCard
-            title="Computadoras"
-            description="Laptops, PCs y accesorios profesionales"
+            title="Ordenadores"
+            description="Laptops,PCs"
             link="/categories/computers"
             buttonText="Ver productos"
           />
