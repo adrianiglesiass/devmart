@@ -4,12 +4,17 @@ import { Link } from 'react-router-dom';
 import type { Product } from '@/api/types/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { useCart } from '@/context/CartContext';
 
 interface ProductCardProps {
   product: Product;
 }
 
 export function ProductCard({ product }: ProductCardProps) {
+  const { addItem } = useCart();
+  const handleAddToCart = () => {
+    addItem(product);
+  };
   return (
     <Card className="hover:shadow-lg transition-shadow h-full flex flex-col">
       {product.image_url && (
@@ -52,6 +57,7 @@ export function ProductCard({ product }: ProductCardProps) {
         <Button
           className="flex-1"
           disabled={!product.stock}
+          onClick={handleAddToCart}
         >
           <ShoppingCart className="w-4 h-4 mr-2" />
           Añadir

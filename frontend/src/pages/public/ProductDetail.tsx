@@ -5,11 +5,13 @@ import { useProduct } from '@/api/hooks/useProducts';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { useCart } from '@/context/CartContext';
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data: product, isLoading, error } = useProduct(Number(id));
+  const { addItem } = useCart();
 
   if (isLoading) {
     return (
@@ -31,6 +33,10 @@ export default function ProductDetail() {
       </Layout>
     );
   }
+
+  const handleAddToCart = () => {
+    addItem(product);
+  };
 
   return (
     <Layout>
@@ -81,6 +87,7 @@ export default function ProductDetail() {
                   size="lg"
                   className="flex-1"
                   disabled={!product.stock}
+                  onClick={handleAddToCart}
                 >
                   <ShoppingCart className="w-5 h-5 mr-2" />
                   Añadir al carrito

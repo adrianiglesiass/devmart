@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 
+import { Cart } from '@/components/cart/Cart';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -48,6 +49,7 @@ export function Navbar() {
 
         {/* Menu */}
         <div className="flex items-center gap-4">
+          <Cart />
           {isAuthenticated ? (
             <>
               {user?.role === 'admin' && (
