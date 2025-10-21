@@ -1,44 +1,20 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { RouterProvider } from 'react-router-dom';
 
-import AdminPanel from '@/pages/admin/AdminPanel';
-import Login from '@/pages/auth/Login';
-import Home from '@/pages/public/Home';
-import { ProtectedRoute } from '@/routes/ProtectedRoute';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+
+import { queryClient } from './api/config/queryClient';
+import { AuthProvider } from './context/AuthContext';
+import { router } from './routes';
 
 function App() {
   return (
-    <Routes>
-      {/* Rutas públicas */}
-      <Route
-        path="/"
-        element={<Home />}
-      />
-      <Route
-        path="/login"
-        element={<Login />}
-      />
-
-      {/*Requiere autenticación) */}
-      <Route
-        path="/admin"
-        element={
-          <ProtectedRoute requireAdmin>
-            <AdminPanel />
-          </ProtectedRoute>
-        }
-      />
-
-      {/* Ruta 404 */}
-      <Route
-        path="*"
-        element={
-          <Navigate
-            to="/"
-            replace
-          />
-        }
-      />
-    </Routes>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <RouterProvider router={router} />
+        <ReactQueryDevtools initialIsOpen={false} />
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }
 
