@@ -29,7 +29,7 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401 && error.config.url !== '/auth/login') {
+    if (error.response?.status === 401 && error.config.method !== 'get') {
       setAccessToken();
       window.location.href = '/login';
     }
@@ -38,7 +38,11 @@ axiosInstance.interceptors.response.use(
       console.error('Server error', error.response.data);
     }
 
-    const errorMessage = error.response?.data?.message || error.message || 'An error occurred';
+    const errorMessage =
+      error.response?.data?.message ||
+      error.response?.data?.error ||
+      error.message ||
+      'An error occurred';
     error.message = errorMessage;
 
     return Promise.reject(error);

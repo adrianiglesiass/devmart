@@ -235,6 +235,11 @@ export interface paths {
                     };
                     content: {
                         "application/json": {
+                            /**
+                             * @description JWT access token for authenticated requests
+                             * @example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                             */
+                            access_token?: string;
                             /** @example Usuario creado exitosamente */
                             message?: string;
                             user?: {

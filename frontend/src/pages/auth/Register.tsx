@@ -17,34 +17,38 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/context/AuthContext';
-import { type LoginFormData, loginSchema } from '@/lib/validations/auth';
+import { type RegisterFormData, registerSchema } from '@/lib/validations/auth';
 
-export default function Login() {
+export default function Register() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { register: registerUser } = useAuth();
   const navigate = useNavigate();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
   });
 
-  const onSubmit = async (data: LoginFormData) => {
+  const onSubmit = async (data: RegisterFormData) => {
     setError('');
     setLoading(true);
 
     try {
-      await login({ email: data.email, password: data.password });
+      await registerUser({
+        username: data.username,
+        email: data.email,
+        password: data.password,
+      });
       navigate('/');
     } catch (err: any) {
       setError(
         err.response?.data?.error ||
           err.response?.data?.message ||
-          'Error al iniciar sesión. Verifica tus credenciales.',
+          'Error al crear la cuenta. Intenta de nuevo.',
       );
     } finally {
       setLoading(false);
@@ -70,7 +74,7 @@ export default function Login() {
               </div>
             </div>
             <CardTitle className="text-3xl font-bold">DevMart</CardTitle>
-            <CardDescription className="text-base">Inicia sesión en tu cuenta</CardDescription>
+            <CardDescription className="text-base">Crea tu cuenta</CardDescription>
           </CardHeader>
 
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -80,6 +84,20 @@ export default function Login() {
                   {error}
                 </div>
               )}
+
+              <div className="space-y-2">
+                <Label htmlFor="username">Nombre de usuario</Label>
+                <Input
+                  id="username"
+                  type="text"
+                  placeholder="tu_usuario"
+                  autoComplete="username"
+                  {...register('username')}
+                />
+                {errors.username && (
+                  <p className="text-sm text-red-600">{errors.username.message}</p>
+                )}
+              </div>
 
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
@@ -99,11 +117,25 @@ export default function Login() {
                   id="password"
                   type="password"
                   placeholder="••••••••"
-                  autoComplete="current-password"
+                  autoComplete="new-password"
                   {...register('password')}
                 />
                 {errors.password && (
                   <p className="text-sm text-red-600">{errors.password.message}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirmar contraseña</Label>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  placeholder="••••••••"
+                  autoComplete="new-password"
+                  {...register('confirmPassword')}
+                />
+                {errors.confirmPassword && (
+                  <p className="text-sm text-red-600">{errors.confirmPassword.message}</p>
                 )}
               </div>
             </CardContent>
@@ -117,20 +149,20 @@ export default function Login() {
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Iniciando sesión...
+                    Creando cuenta...
                   </>
                 ) : (
-                  'Iniciar Sesión'
+                  'Registrarse'
                 )}
               </Button>
 
               <p className="text-sm text-center text-gray-600">
-                ¿No tienes cuenta?{' '}
+                ¿Ya tienes cuenta?{' '}
                 <Link
-                  to="/register"
+                  to="/login"
                   className="text-blue-600 hover:text-blue-700 font-semibold hover:underline"
                 >
-                  Regístrate aquí
+                  Inicia sesión
                 </Link>
               </p>
             </CardFooter>

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo } from 'react';
+import React, { createContext, useContext, useMemo, useState } from 'react';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -19,11 +19,12 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const queryClient = useQueryClient();
+  const [forceUpdate, setForceUpdate] = useState(0);
 
   const ME_QUERY_KEY = ['me'];
 
   // Cargar usuario actual si hay token almacenado
-  const hasToken = !!getAccessToken();
+  const hasToken = useMemo(() => !!getAccessToken(), [forceUpdate]);
   const { data: me, isFetching: isFetchingUser } = useQuery<User>({
     queryKey: ME_QUERY_KEY,
     queryFn: authApi.getCurrentUser,
@@ -37,7 +38,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const loginMutation = useMutation({
     mutationFn: authApi.login,
     onSuccess: (data) => {
-      queryClient.setQueryData<User>(ME_QUERY_KEY, data.user);
+      if (data.user) {
+        queryClient.setQueryData(ME_QUERY_KEY, data.user);
+      }
+      setForceUpdate((prev) => prev + 1);
     },
   });
 
@@ -45,8 +49,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     mutationFn: authApi.register,
     onSuccess: (data) => {
       if (data.user) {
-        queryClient.setQueryData<User>(ME_QUERY_KEY, data.user);
+        queryClient.setQueryData(ME_QUERY_KEY, data.user);
       }
+      setForceUpdate((prev) => prev + 1);
     },
   });
 
@@ -56,10 +61,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const register = async (userData: RegisterRequest) => {
     await registerMutation.mutateAsync(userData);
+    await login({ email: userData.email, password: userData.password });
   };
 
   const logout = () => {
     authApi.logout();
+    setForceUpdate((prev) => prev + 1);
     queryClient.removeQueries({ queryKey: ME_QUERY_KEY });
   };
 

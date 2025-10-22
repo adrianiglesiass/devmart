@@ -13,7 +13,7 @@ import {
 import { useAuth } from '@/context/AuthContext';
 
 export function Navbar() {
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, user, logout, isLoading } = useAuth();
 
   return (
     <nav className="border-b bg-white shadow-sm">
@@ -50,7 +50,14 @@ export function Navbar() {
         {/* Menu */}
         <div className="flex items-center gap-4">
           <Cart />
-          {isAuthenticated ? (
+          {isLoading ? (
+            <Button
+              disabled
+              className="bg-gray-400"
+            >
+              Cargando...
+            </Button>
+          ) : isAuthenticated ? (
             <>
               {user?.role === 'admin' && (
                 <Link to="/admin">
