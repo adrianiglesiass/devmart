@@ -1,4 +1,4 @@
-import { type ReactNode, createContext, useContext, useEffect, useState } from 'react';
+import { type ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react';
 
 import type { Product } from '@/api/types/types';
 
@@ -10,7 +10,7 @@ interface CartContextType {
   items: CartItem[];
   addItem: (product: Product) => void;
   removeItem: (productId: number) => void;
-  updateQuantity: (prodcutId: number, quantity: number) => void;
+  updateQuantity: (productId: number, quantity: number) => void;
   clearCart: () => void;
   totalItems: number;
   totalPrice: number;
@@ -46,8 +46,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const removeItem = (produdctId: number) => {
-    setItems((prev) => prev.filter((item) => item.id !== produdctId));
+  const removeItem = (productId: number) => {
+    setItems((prev) => prev.filter((item) => item.id !== productId));
   };
 
   const updateQuantity = (productId: number, quantity: number) => {
@@ -62,8 +62,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setItems([]);
   };
 
-  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
-  const totalPrice = items.reduce((sum, item) => sum + (item.price || 0) * item.quantity, 0);
+  const totalItems = useMemo(() => items.reduce((sum, item) => sum + item.quantity, 0), [items]);
+  const totalPrice = useMemo(
+    () => items.reduce((sum, item) => sum + (item.price || 0) * item.quantity, 0),
+    [items],
+  );
 
   return (
     <CartContext.Provider

@@ -76,7 +76,7 @@ export default function ProductDetail() {
               </p>
 
               <div className="mb-6">
-                <p className="text-4xl font-bold text-blue-600">${product.price?.toFixed(2)}</p>
+                <p className="text-4xl font-bold text-blue-600">€{product.price?.toFixed(2)}</p>
                 <p className="text-sm text-gray-500 mt-2">
                   Stock disponible: {product.stock || 0} unidades
                 </p>

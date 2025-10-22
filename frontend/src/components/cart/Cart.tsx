@@ -54,7 +54,7 @@ export function Cart() {
             <div className="border-t pt-4 space-y-4">
               <div className="flex justify-between items-center">
                 <span className="text-lg font-bold">Total:</span>
-                <span className="text-2xl font-bold text-blue-600">${totalPrice.toFixed(2)}</span>
+                <span className="text-2xl font-bold text-blue-600">€{totalPrice.toFixed(2)}</span>
               </div>
 
               <Link
