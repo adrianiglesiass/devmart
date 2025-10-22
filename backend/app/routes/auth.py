@@ -56,6 +56,10 @@ def register() -> Tuple[Response, int]:
                 message:
                   type: string
                   example: "Usuario creado exitosamente"
+                access_token:
+                  type: string
+                  description: JWT access token for authenticated requests
+                  example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
                 user:
                   type: object
                   properties:
@@ -114,8 +118,11 @@ def register() -> Tuple[Response, int]:
     db.session.add(user)
     db.session.commit()
 
+    access_token = create_access_token(identity=str(user.id))
+
     return jsonify({
         'message': 'Usuario creado exitosamente',
+        'access_token': access_token,
         'user': user.to_dict()
     }), 201
 
