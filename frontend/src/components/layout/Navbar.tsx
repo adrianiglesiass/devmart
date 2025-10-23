@@ -1,3 +1,4 @@
+import { Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import { Cart } from '@/components/cart/Cart';
@@ -13,7 +14,7 @@ import {
 import { useAuth } from '@/context/AuthContext';
 
 export function Navbar() {
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, user, logout, isLoading } = useAuth();
 
   return (
     <nav className="border-b bg-white shadow-sm">
@@ -50,7 +51,9 @@ export function Navbar() {
         {/* Menu */}
         <div className="flex items-center gap-4">
           <Cart />
-          {isAuthenticated ? (
+          {isLoading ? (
+            <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
+          ) : isAuthenticated ? (
             <>
               {user?.role === 'admin' && (
                 <Link to="/admin">

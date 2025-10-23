@@ -2,7 +2,14 @@ import { ShoppingCart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
 import { useCart } from '@/context/CartContext';
 
 import { CartItem } from './CartItem';
@@ -32,6 +39,9 @@ export function Cart() {
           <SheetTitle>
             Carrito de Compras ({totalItems} {totalItems === 1 ? 'producto' : 'productos'})
           </SheetTitle>
+          <SheetDescription>
+            Revisa y gestiona los productos en tu carrito de compras.
+          </SheetDescription>
         </SheetHeader>
 
         {items.length === 0 ? (
