@@ -38,12 +38,12 @@ export default function Login() {
     setLoading(true);
 
     try {
-      await login({ email: data.email, password: data.password });
+      await login(data);
       navigate('/');
     } catch (err: any) {
       setError(
-        err.response?.data?.error ||
-          err.response?.data?.message ||
+        err?.response?.data?.error ||
+          err?.response?.data?.message ||
           'Error al iniciar sesión. Verifica tus credenciales.',
       );
     } finally {
