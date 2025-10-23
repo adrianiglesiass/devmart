@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { PasswordInput } from '@/components/ui/password-input';
 import { useAuth } from '@/context/AuthContext';
 import { type LoginFormData, loginSchema } from '@/lib/validations/auth';
 
@@ -95,9 +96,8 @@ export default function Login() {
 
               <div className="space-y-2">
                 <Label htmlFor="password">Contraseña</Label>
-                <Input
+                <PasswordInput
                   id="password"
-                  type="password"
                   placeholder="••••••••"
                   autoComplete="current-password"
                   {...register('password')}

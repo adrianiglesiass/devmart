@@ -1,4 +1,4 @@
-import { Loader2 } from 'lucide-react';
+import { LoaderCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import { Cart } from '@/components/cart/Cart';
@@ -52,7 +52,7 @@ export function Navbar() {
         <div className="flex items-center gap-4">
           <Cart />
           {isLoading ? (
-            <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
+            <LoaderCircle className="h-7 w-7 animate-spin text-blue-600" />
           ) : isAuthenticated ? (
             <>
               {user?.role === 'admin' && (
