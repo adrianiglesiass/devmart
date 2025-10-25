@@ -897,13 +897,6 @@ export interface paths {
                              */
                             quantity: number;
                         }[];
-                        /**
-                         * @description Initial order status
-                         * @default pending
-                         * @example pending
-                         * @enum {string}
-                         */
-                        status?: "pending" | "processing" | "shipped" | "delivered" | "cancelled";
                     };
                 };
             };
@@ -959,18 +952,6 @@ export interface paths {
                     content: {
                         "application/json": {
                             /** @example Missing Authorization Header */
-                            msg?: string;
-                        };
-                    };
-                };
-                /** @description Admin permission required */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            /** @example Requiere permisos de administrador */
                             msg?: string;
                         };
                     };
