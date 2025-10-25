@@ -1,6 +1,8 @@
 import { ShoppingCart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+import { useState } from 'react';
+
 import { Button } from '@/components/ui/button';
 import {
   Sheet,
@@ -16,9 +18,13 @@ import { CartItem } from './CartItem';
 
 export function Cart() {
   const { items, totalItems, totalPrice, clearCart } = useCart();
+  const [open, setOpen] = useState(false);
 
   return (
-    <Sheet>
+    <Sheet
+      open={open}
+      onOpenChange={setOpen}
+    >
       <SheetTrigger asChild>
         <Button
           variant="outline"
@@ -70,6 +76,7 @@ export function Cart() {
               <Link
                 to="/checkout"
                 className="block"
+                onClick={() => setOpen(false)}
               >
                 <Button
                   className="w-full"
