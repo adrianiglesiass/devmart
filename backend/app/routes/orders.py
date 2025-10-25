@@ -1,6 +1,5 @@
 from flask import Blueprint, request, jsonify, Response
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from app.utils.decorators import admin_required
 from app.extensions import db
 from app.models.order import Order
 from app.models.order_item import OrderItem
@@ -200,7 +199,6 @@ def get_order(id: int) -> Tuple[Response, int]:
 
 @bp.route('/', methods=['POST'])
 @jwt_required()
-@admin_required()
 def create_order() -> Tuple[Response, int]:
     """
     Create a new order
@@ -237,12 +235,6 @@ def create_order() -> Tuple[Response, int]:
                       minimum: 1
                       description: Quantity to order
                       example: 2
-              status:
-                type: string
-                enum: [pending, processing, shipped, delivered, cancelled]
-                default: pending
-                description: Initial order status
-                example: "pending"
     responses:
       201:
         description: Order created successfully
@@ -298,16 +290,6 @@ def create_order() -> Tuple[Response, int]:
                 msg:
                   type: string
                   example: "Missing Authorization Header"
-      403:
-        description: Admin permission required
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                msg:
-                  type: string
-                  example: "Requiere permisos de administrador"
       404:
         description: Product not found
         content:
@@ -339,52 +321,59 @@ def create_order() -> Tuple[Response, int]:
     validated_items: list[dict] = []
 
     for item in data['items']:
-        if not item.get('product_id') or not item.get('quantity'):
+        if not item.get('product_id') or 'quantity' not in item:
             return jsonify({'error': 'Cada item debe tener product_id y quantity'}), 400
+
+        quantity = item['quantity']
+
+        if not isinstance(quantity, int) or quantity <= 0:
+            return jsonify({'error': 'La cantidad debe ser un número entero mayor a 0'}), 400
 
         product: Product | None = Product.query.get(item['product_id'])
 
         if not product:
             return jsonify({'error': f"Producto con id {item['product_id']} no encontrado"}), 404
 
-        if product.stock < item['quantity']:
-            return jsonify({'error': f'Stock insuficiente para el producto {product.name}'}), 400
+        if product.stock < quantity:
+            return jsonify({'error': f'Stock insuficiente para el producto {product.name}. Disponible: {product.stock}, solicitado: {quantity}'}), 400
 
         validated_items.append({
             'product': product,
-            'quantity': item['quantity'],
+            'quantity': quantity,
             'price': product.price
         })
 
-        total += product.price * item['quantity']
-
-    order: Order = Order(
-        user_id=user_id,
-        total=total,
-        status=data.get('status', 'pending'),
-    )
-
-    db.session.add(order)
-    db.session.flush()
-
-    for item in validated_items:
-        order_item: OrderItem = OrderItem(
-            order_id=order.id,
-            product_id=item['product'].id,
-            quantity=item['quantity'],
-            price=item['price']
-        )
-        db.session.add(order_item)
-
-        item['product'].stock -= item['quantity']
+        total += product.price * quantity
 
     try:
+        order: Order = Order(
+            user_id=user_id,
+            total=total,
+            status='pending',
+        )
+
+        db.session.add(order)
+        db.session.flush()
+
+        for item in validated_items:
+            order_item: OrderItem = OrderItem(
+                order_id=order.id,
+                product_id=item['product'].id,
+                quantity=item['quantity'],
+                price=item['price']
+            )
+            db.session.add(order_item)
+
+            item['product'].stock -= item['quantity']
+
         db.session.commit()
+
         return jsonify({
             'message': 'Pedido creado correctamente',
             'order': order.to_dict()
         }), 201
-    except Exception:
+
+    except Exception as e:
         db.session.rollback()
         return jsonify({'error': 'Error al crear el pedido'}), 500
 
