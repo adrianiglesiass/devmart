@@ -1,3 +1,5 @@
+import { Cpu, Headphones, Laptop } from 'lucide-react';
+
 import { CategoryCard } from '@/components/home/CategoryCard';
 import { FeaturedProducts } from '@/components/home/FeaturedProducts';
 import { HeroSection } from '@/components/home/HeroSection';
@@ -8,26 +10,31 @@ export default function Home() {
     <Layout>
       <HeroSection />
 
-      <section className="py-12">
-        <h2 className="text-3xl font-bold mb-8 text-center">Categorías Destacadas</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <section className="py-24 bg-gray-50">
+        <h2 className="text-4xl font-bold text-center text-gray-900 mb-16">
+          Categorías Destacadas
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           <CategoryCard
+            icon={<Cpu />}
             title="Electrónica"
-            description="Últimos gadgets y tecnología de punta"
+            description="Gadgets, wearables y lo último en tecnología de consumo."
             link="/categories/electronics"
             buttonText="Ver productos"
           />
 
           <CategoryCard
+            icon={<Laptop />}
             title="Ordenadores"
-            description="Laptops,PCs"
+            description="Laptops, PCs de escritorio y componentes de alto rendimiento."
             link="/categories/computers"
             buttonText="Ver productos"
           />
 
           <CategoryCard
+            icon={<Headphones />}
             title="Accesorios"
-            description="Todo lo que necesitas para tu setup"
+            description="Todo lo que necesitas para complementar tu setup perfecto."
             link="/categories/accessories"
             buttonText="Ver productos"
           />
@@ -35,8 +42,8 @@ export default function Home() {
       </section>
 
       {/* Features */}
-      <section className="py-12 bg-white rounded-lg shadow-sm">
-        <h2 className="text-3xl font-bold mb-8 text-center bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+      <section className="py-24 bg-white">
+        <h2 className="text-4xl font-bold text-center text-indigo-600 mb-16">
           Productos Destacados
         </h2>
         <FeaturedProducts />

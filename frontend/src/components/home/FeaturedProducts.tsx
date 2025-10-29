@@ -15,7 +15,7 @@ export function FeaturedProducts() {
     );
   }
 
-  const featured = products?.slice(0, 3) || [];
+  const featured = products?.slice(0, 4) || [];
 
   if (featured.length === 0) {
     return (
@@ -26,7 +26,7 @@ export function FeaturedProducts() {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
       {featured.map((product) => (
         <ProductCard
           key={product.id}

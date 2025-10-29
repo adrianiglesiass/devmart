@@ -155,7 +155,7 @@ export default function Checkout() {
           <CardFooter className="flex flex-col gap-4">
             <div className="w-full flex justify-between items-center text-lg font-bold">
               <span>Total:</span>
-              <span className="text-2xl text-blue-600">€{totalPrice.toFixed(2)}</span>
+              <span className="text-2xl text-indigo-600">€{totalPrice.toFixed(2)}</span>
             </div>
           </CardFooter>
         </Card>
