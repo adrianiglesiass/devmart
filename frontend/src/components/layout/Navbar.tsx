@@ -17,42 +17,41 @@ export function Navbar() {
   const { isAuthenticated, user, logout, isLoading } = useAuth();
 
   return (
-    <nav className="border-b bg-white shadow-sm">
-      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+    <nav className="border-b bg-white shadow-sm sticky top-0 z-50">
+      <div className="container mx-auto px-6 py-4 flex items-center justify-between">
         <Link
           to="/"
-          className="text-2xl font-bold text-blue-600 hover:text-blue-700"
+          className="text-3xl font-bold text-indigo-600 hover:text-indigo-700"
         >
           DevMart
         </Link>
 
-        {/* Navigation Links */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden md:flex items-center space-x-8">
           <Link
             to="/"
-            className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+            className="text-gray-600 hover:text-indigo-600 font-medium transition-colors"
           >
             Inicio
           </Link>
           <Link
             to="/products"
-            className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+            className="text-gray-600 hover:text-indigo-600 font-medium transition-colors"
           >
             Productos
           </Link>
           <Link
             to="/categories"
-            className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+            className="text-gray-600 hover:text-indigo-600 font-medium transition-colors"
           >
             Categorías
           </Link>
         </div>
 
         {/* Menu */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center space-x-5">
           <Cart />
           {isLoading ? (
-            <LoaderCircle className="h-7 w-7 animate-spin text-blue-600" />
+            <LoaderCircle className="h-7 w-7 animate-spin text-indigo-600" />
           ) : isAuthenticated ? (
             <>
               {user?.role === 'admin' && (
@@ -72,7 +71,7 @@ export function Navbar() {
                     variant="ghost"
                     className="flex items-center gap-2"
                   >
-                    <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold">
+                    <div className="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-semibold">
                       {user?.username?.charAt(0).toUpperCase() || 'U'}
                     </div>
                     <span className="hidden md:inline">{user?.username}</span>
@@ -117,7 +116,9 @@ export function Navbar() {
             </>
           ) : (
             <Link to="/login">
-              <Button className="bg-blue-600 hover:bg-blue-700">Iniciar sesión</Button>
+              <Button className="bg-indigo-600 text-white px-5 py-2 rounded-lg font-medium shadow-md hover:bg-indigo-700 transition-all transform hover:scale-105">
+                Iniciar sesión
+              </Button>
             </Link>
           )}
         </div>

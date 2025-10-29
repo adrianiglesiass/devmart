@@ -29,11 +29,11 @@ export function Cart() {
         <Button
           variant="outline"
           size="icon"
-          className="relative"
+          className="relative transition-transform duration-300 hover:scale-110 hover:rotate-6"
         >
           <ShoppingCart className="h-5 w-5" />
           {totalItems > 0 && (
-            <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+            <span className="absolute -top-2 -right-2 bg-indigo-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
               {totalItems}
             </span>
           )}
@@ -70,7 +70,7 @@ export function Cart() {
             <div className="border-t pt-4 space-y-4">
               <div className="flex justify-between items-center">
                 <span className="text-lg font-bold">Total:</span>
-                <span className="text-2xl font-bold text-blue-600">€{totalPrice.toFixed(2)}</span>
+                <span className="text-2xl font-bold text-indigo-600">€{totalPrice.toFixed(2)}</span>
               </div>
 
               <Link
