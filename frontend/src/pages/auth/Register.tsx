@@ -1,10 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2, ShoppingBag } from 'lucide-react';
+import { AlertCircle, Loader2, ShoppingBag } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { useState } from 'react';
 
+import { useQueryClient } from '@tanstack/react-query';
+
+import { authApi } from '@/api/services/auth.api';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -17,14 +20,24 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { PasswordInput } from '@/components/ui/password-input';
-import { useAuth } from '@/context/AuthContext';
 import { type RegisterFormData, registerSchema } from '@/lib/validations/auth';
 
+function ErrorAlert({ message }: { message: string }) {
+  if (!message) return null;
+
+  return (
+    <div className="flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">
+      <AlertCircle className="h-5 w-5 flex-shrink-0" />
+      <p className="flex-1 leading-relaxed">{message}</p>
+    </div>
+  );
+}
+
 export default function Register() {
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { register: registerUser } = useAuth();
+  const [errorMessage, setErrorMessage] = useState<string>('');
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const {
     register,
@@ -35,22 +48,29 @@ export default function Register() {
   });
 
   const onSubmit = async (data: RegisterFormData) => {
-    setError('');
     setLoading(true);
+    setErrorMessage('');
 
     try {
-      await registerUser({
+      const response = await authApi.register({
         username: data.username,
         email: data.email,
         password: data.password,
       });
+      // Actualizar cache con usuario autenticado
+      if (response.user) {
+        queryClient.setQueryData(['me'], response.user);
+      }
+      // Forzar revalidación
+      queryClient.invalidateQueries({ queryKey: ['me'] });
       navigate('/');
     } catch (err: any) {
-      setError(
+      const error =
         err?.response?.data?.error ||
-          err?.response?.data?.message ||
-          'Error al crear la cuenta. Intenta de nuevo.',
-      );
+        err?.response?.data?.message ||
+        'Error al crear la cuenta. Intenta de nuevo.';
+
+      setErrorMessage(error);
     } finally {
       setLoading(false);
     }
@@ -80,11 +100,7 @@ export default function Register() {
 
           <form onSubmit={handleSubmit(onSubmit)}>
             <CardContent className="space-y-4">
-              {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
-                  {error}
-                </div>
-              )}
+              <ErrorAlert message={errorMessage} />
 
               <div className="space-y-2">
                 <Label htmlFor="username">Nombre de usuario</Label>

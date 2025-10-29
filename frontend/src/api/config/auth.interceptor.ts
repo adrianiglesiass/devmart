@@ -29,7 +29,11 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401 && error.config.method !== 'get') {
+    // No redirigir a login si ya estamos en login o register
+    const isAuthRoute =
+      error.config?.url?.includes('/auth/login') || error.config?.url?.includes('/auth/register');
+
+    if (error.response?.status === 401 && error.config.method !== 'get' && !isAuthRoute) {
       setAccessToken();
       window.location.href = '/login';
     }
