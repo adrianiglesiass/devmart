@@ -33,24 +33,16 @@ def get_categories() -> Tuple[Response, int]:
                   name:
                     type: string
                     example: "Electrónica"
+                  slug:
+                    type: string
+                    example: "electronica"
                   description:
                     type: string
                     example: "Productos electrónicos y tecnológicos"
-                  products:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                          example: 1
-                        name:
-                          type: string
-                          example: "Laptop HP Pavilion"
-                        price:
-                          type: number
-                          format: float
-                          example: 899.99
+                  product_count:
+                    type: integer
+                    description: "Número de productos en esta categoría"
+                    example: 5
     """
     categories: list[Category] = Category.query.all()
     return jsonify([category.to_dict() for category in categories]), 200
@@ -85,24 +77,16 @@ def get_category(id: int) -> Tuple[Response, int]:
                 name:
                   type: string
                   example: "Electrónica"
+                slug:
+                  type: string
+                  example: "electronica"
                 description:
                   type: string
                   example: "Productos electrónicos y tecnológicos"
-                products:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      id:
-                        type: integer
-                        example: 1
-                      name:
-                        type: string
-                        example: "Laptop HP Pavilion"
-                      price:
-                        type: number
-                        format: float
-                        example: 899.99
+                product_count:
+                  type: integer
+                  description: "Número de productos en esta categoría"
+                  example: 5
       404:
         description: Category not found
         content:
@@ -118,6 +102,64 @@ def get_category(id: int) -> Tuple[Response, int]:
 
     if not category:
         return jsonify({'error': f'Categoria con id {id} no encontrada'}), 404
+
+    return jsonify(category.to_dict()), 200
+
+
+@bp.route('/slug/<string:slug>', methods=['GET'])
+def get_category_by_slug(slug: str) -> Tuple[Response, int]:
+    """
+    Get a specific category by slug
+    ---
+    tags:
+      - Categories
+    parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+        description: Category unique slug identifier
+        example: "electronica"
+    responses:
+      200:
+        description: Category details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  example: 1
+                name:
+                  type: string
+                  example: "Electrónica"
+                slug:
+                  type: string
+                  example: "electronica"
+                description:
+                  type: string
+                  example: "Productos electrónicos y tecnológicos"
+                product_count:
+                  type: integer
+                  description: "Número de productos en esta categoría"
+                  example: 5
+      404:
+        description: Category not found
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Categoría no encontrada"
+    """
+    category: Category | None = Category.query.filter_by(slug=slug).first()
+
+    if not category:
+        return jsonify({'message': 'Categoría no encontrada'}), 404
 
     return jsonify(category.to_dict()), 200
 
@@ -139,60 +181,41 @@ def get_category_products(id: int) -> Tuple[Response, int]:
         example: 1
     responses:
       200:
-        description: Category with its products
+        description: List of products in the category
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                category:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                      example: 1
-                    name:
-                      type: string
-                      example: "Electrónica"
-                    description:
-                      type: string
-                      example: "Productos electrónicos y tecnológicos"
-                    products:
-                      type: array
-                      items:
-                        type: object
-                products:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      id:
-                        type: integer
-                        example: 1
-                      name:
-                        type: string
-                        example: "Laptop HP Pavilion"
-                      description:
-                        type: string
-                        example: "Laptop de alto rendimiento"
-                      price:
-                        type: number
-                        format: float
-                        example: 899.99
-                      stock:
-                        type: integer
-                        example: 25
-                      category_id:
-                        type: integer
-                        example: 1
-                      image_url:
-                        type: string
-                        format: uri
-                        example: "https://example.com/images/laptop.jpg"
-                      created_at:
-                        type: string
-                        format: date-time
-                        example: "2025-10-20T10:30:00.000000"
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  name:
+                    type: string
+                    example: "Laptop HP Pavilion"
+                  description:
+                    type: string
+                    example: "Laptop de alto rendimiento"
+                  price:
+                    type: number
+                    format: float
+                    example: 899.99
+                  stock:
+                    type: integer
+                    example: 25
+                  category_id:
+                    type: integer
+                    example: 1
+                  image_url:
+                    type: string
+                    format: uri
+                    example: "https://example.com/images/laptop.jpg"
+                  created_at:
+                    type: string
+                    format: date-time
+                    example: "2025-10-20T10:30:00.000000"
       404:
         description: Category not found
         content:
@@ -211,10 +234,7 @@ def get_category_products(id: int) -> Tuple[Response, int]:
 
     products: list[Product] = Product.query.filter_by(category_id=id).all()
 
-    return jsonify({
-        'category': category.to_dict(),
-        'products': [product.to_dict() for product in products]
-    }), 200
+    return jsonify([product.to_dict() for product in products]), 200
 
 
 @bp.route('/', methods=['POST'])
@@ -268,14 +288,16 @@ def create_category() -> Tuple[Response, int]:
                     name:
                       type: string
                       example: "Electrónica"
+                    slug:
+                      type: string
+                      example: "electronica"
                     description:
                       type: string
                       example: "Productos electrónicos y tecnológicos"
-                    products:
-                      type: array
-                      items:
-                        type: object
-                      example: []
+                    product_count:
+                      type: integer
+                      description: "Número de productos en esta categoría"
+                      example: 0
       400:
         description: Missing required fields
         content:
@@ -396,13 +418,16 @@ def update_category(id: int) -> Tuple[Response, int]:
                     name:
                       type: string
                       example: "Tecnología"
+                    slug:
+                      type: string
+                      example: "tecnologia"
                     description:
                       type: string
                       example: "Nueva descripción de la categoría"
-                    products:
-                      type: array
-                      items:
-                        type: object
+                    product_count:
+                      type: integer
+                      description: "Número de productos en esta categoría"
+                      example: 5
       400:
         description: No data received for update
         content:
