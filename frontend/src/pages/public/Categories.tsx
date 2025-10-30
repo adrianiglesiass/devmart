@@ -44,7 +44,7 @@ export default function Categories() {
                   <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer group">
                     <CardHeader>
                       <div className="flex items-start justify-between">
-                        <div className="h-12 w-12 mb-4 text-indigo-600 group-hover:text-indigo-700">
+                        <div className="h-12 w-12 mb-4 group-hover:text-indigo-700">
                           {React.cloneElement(icon, {
                             className: 'h-full w-full',
                             strokeWidth: 1.5,

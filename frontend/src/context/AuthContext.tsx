@@ -46,6 +46,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (data.user) {
         queryClient.setQueryData(ME_QUERY_KEY, data.user);
       }
+      // Invalidar queries que dependen del usuario autenticado
+      queryClient.invalidateQueries({ queryKey: ['orders'] });
       setForceUpdate((prev) => prev + 1);
     },
   });
@@ -73,6 +75,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     authApi.logout();
     setForceUpdate((prev) => prev + 1);
     queryClient.removeQueries({ queryKey: ME_QUERY_KEY });
+    queryClient.removeQueries({ queryKey: ['orders'] });
   };
 
   const isLoading = isFetchingUser || loginMutation.isPending || registerMutation.isPending;
