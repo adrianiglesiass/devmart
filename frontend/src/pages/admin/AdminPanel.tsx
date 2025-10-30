@@ -1,4 +1,4 @@
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/api/hooks/useAuth';
 
 export default function AdminPanel() {
   const { user } = useAuth();

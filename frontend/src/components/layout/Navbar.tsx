@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 import { useState } from 'react';
 
+import { useAuth } from '@/api/hooks/useAuth';
 import { Cart } from '@/components/cart/Cart';
 import { Button } from '@/components/ui/button';
 import {
@@ -13,7 +14,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useAuth } from '@/context/AuthContext';
 
 const navigationLinks = [
   { to: '/', label: 'Inicio' },

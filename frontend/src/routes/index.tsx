@@ -2,6 +2,7 @@ import { Navigate, createBrowserRouter } from 'react-router-dom';
 
 import AdminPanel from '@/pages/admin/AdminPanel';
 import Login from '@/pages/auth/Login';
+import Profile from '@/pages/auth/Profile';
 import Register from '@/pages/auth/Register';
 import Checkout from '@/pages/orders/Checkout';
 import MyOrders from '@/pages/orders/MyOrders';
@@ -27,6 +28,15 @@ export const router = createBrowserRouter([
   {
     path: '/register',
     element: <Register />,
+  },
+
+  {
+    path: '/profile',
+    element: (
+      <ProtectedRoute>
+        <Profile />
+      </ProtectedRoute>
+    ),
   },
 
   {
