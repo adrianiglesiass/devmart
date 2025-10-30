@@ -325,17 +325,13 @@ export interface paths {
                             id?: number;
                             /** @example Electrónica */
                             name?: string;
-                            products?: {
-                                /** @example 1 */
-                                id?: number;
-                                /** @example Laptop HP Pavilion */
-                                name?: string;
-                                /**
-                                 * Format: float
-                                 * @example 899.99
-                                 */
-                                price?: number;
-                            }[];
+                            /**
+                             * @description Número de productos en esta categoría
+                             * @example 5
+                             */
+                            product_count?: number;
+                            /** @example electronica */
+                            slug?: string;
                         }[];
                     };
                 };
@@ -382,8 +378,13 @@ export interface paths {
                                 id?: number;
                                 /** @example Electrónica */
                                 name?: string;
-                                /** @example [] */
-                                products?: Record<string, never>[];
+                                /**
+                                 * @description Número de productos en esta categoría
+                                 * @example 0
+                                 */
+                                product_count?: number;
+                                /** @example electronica */
+                                slug?: string;
                             };
                             /** @example Categoria creada correctamente */
                             message?: string;
@@ -446,6 +447,74 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/categories/slug/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get a specific category by slug */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Category unique slug identifier
+                     * @example electronica
+                     */
+                    slug: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Category details */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @example Productos electrónicos y tecnológicos */
+                            description?: string;
+                            /** @example 1 */
+                            id?: number;
+                            /** @example Electrónica */
+                            name?: string;
+                            /**
+                             * @description Número de productos en esta categoría
+                             * @example 5
+                             */
+                            product_count?: number;
+                            /** @example electronica */
+                            slug?: string;
+                        };
+                    };
+                };
+                /** @description Category not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @example Categoría no encontrada */
+                            message?: string;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/categories/{id}": {
         parameters: {
             query?: never;
@@ -482,17 +551,13 @@ export interface paths {
                             id?: number;
                             /** @example Electrónica */
                             name?: string;
-                            products?: {
-                                /** @example 1 */
-                                id?: number;
-                                /** @example Laptop HP Pavilion */
-                                name?: string;
-                                /**
-                                 * Format: float
-                                 * @example 899.99
-                                 */
-                                price?: number;
-                            }[];
+                            /**
+                             * @description Número de productos en esta categoría
+                             * @example 5
+                             */
+                            product_count?: number;
+                            /** @example electronica */
+                            slug?: string;
                         };
                     };
                 };
@@ -550,7 +615,13 @@ export interface paths {
                                 id?: number;
                                 /** @example Tecnología */
                                 name?: string;
-                                products?: Record<string, never>[];
+                                /**
+                                 * @description Número de productos en esta categoría
+                                 * @example 5
+                                 */
+                                product_count?: number;
+                                /** @example tecnologia */
+                                slug?: string;
                             };
                             /** @example Categoria actualizada correctamente */
                             message?: string;
@@ -726,50 +797,39 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
-                /** @description Category with its products */
+                /** @description List of products in the category */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
                         "application/json": {
-                            category?: {
-                                /** @example Productos electrónicos y tecnológicos */
-                                description?: string;
-                                /** @example 1 */
-                                id?: number;
-                                /** @example Electrónica */
-                                name?: string;
-                                products?: Record<string, never>[];
-                            };
-                            products?: {
-                                /** @example 1 */
-                                category_id?: number;
-                                /**
-                                 * Format: date-time
-                                 * @example 2025-10-20T10:30:00.000000
-                                 */
-                                created_at?: string;
-                                /** @example Laptop de alto rendimiento */
-                                description?: string;
-                                /** @example 1 */
-                                id?: number;
-                                /**
-                                 * Format: uri
-                                 * @example https://example.com/images/laptop.jpg
-                                 */
-                                image_url?: string;
-                                /** @example Laptop HP Pavilion */
-                                name?: string;
-                                /**
-                                 * Format: float
-                                 * @example 899.99
-                                 */
-                                price?: number;
-                                /** @example 25 */
-                                stock?: number;
-                            }[];
-                        };
+                            /** @example 1 */
+                            category_id?: number;
+                            /**
+                             * Format: date-time
+                             * @example 2025-10-20T10:30:00.000000
+                             */
+                            created_at?: string;
+                            /** @example Laptop de alto rendimiento */
+                            description?: string;
+                            /** @example 1 */
+                            id?: number;
+                            /**
+                             * Format: uri
+                             * @example https://example.com/images/laptop.jpg
+                             */
+                            image_url?: string;
+                            /** @example Laptop HP Pavilion */
+                            name?: string;
+                            /**
+                             * Format: float
+                             * @example 899.99
+                             */
+                            price?: number;
+                            /** @example 25 */
+                            stock?: number;
+                        }[];
                     };
                 };
                 /** @description Category not found */

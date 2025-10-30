@@ -43,14 +43,16 @@ export type DeleteProductResponse =
   paths['/products/{id}']['delete']['responses']['200']['content']['application/json'];
 
 // Categories
-export type Category = GetCategoryResponse;
-export type CategoryProduct = ArrayElement<Category['products']>;
-
 export type GetCategoriesResponse =
   paths['/categories/']['get']['responses']['200']['content']['application/json'];
 
 export type GetCategoryResponse =
   paths['/categories/{id}']['get']['responses']['200']['content']['application/json'];
+
+export type GetCategoryBySlugResponse =
+  paths['/categories/slug/{slug}']['get']['responses']['200']['content']['application/json'];
+
+export type Category = ArrayElement<GetCategoriesResponse>;
 
 export type CreateCategoryRequest =
   paths['/categories/']['post']['requestBody']['content']['application/json'];
