@@ -1,4 +1,5 @@
 import { RouterProvider } from 'react-router-dom';
+import { Toaster } from 'sonner';
 
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
@@ -14,6 +15,10 @@ function App() {
       <AuthProvider>
         <CartProvider>
           <RouterProvider router={router} />
+          <Toaster
+            position="top-right"
+            richColors
+          />
           <ReactQueryDevtools initialIsOpen={false} />
         </CartProvider>
       </AuthProvider>

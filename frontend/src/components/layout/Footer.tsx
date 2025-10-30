@@ -48,7 +48,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  to="/orders/11"
+                  to="/orders"
                   className="text-sm hover:text-white transition-colors"
                 >
                   Mis Pedidos
