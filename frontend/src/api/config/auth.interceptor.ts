@@ -29,6 +29,11 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Silenciar errores esperados de verificación de autenticación
+    const isAuthMeEndpoint = error.config?.url?.includes('/auth/me');
+    const isUnauthorizedOrNotFound =
+      error.response?.status === 401 || error.response?.status === 404;
+
     // No redirigir a login si ya estamos en login o register
     const isAuthRoute =
       error.config?.url?.includes('/auth/login') || error.config?.url?.includes('/auth/register');
@@ -38,8 +43,15 @@ axiosInstance.interceptors.response.use(
       window.location.href = '/login';
     }
 
+    // Solo mostrar errores 500 en consola (errores de servidor)
     if (error.response?.status === 500) {
       console.error('Server error', error.response.data);
+    }
+
+    // Si es el endpoint /auth/me con 401 o 404, es esperado cuando no hay usuario autenticado
+    // No necesitamos hacer nada especial, solo pasar el error
+    if (isAuthMeEndpoint && isUnauthorizedOrNotFound) {
+      return Promise.reject(error);
     }
 
     const errorMessage =

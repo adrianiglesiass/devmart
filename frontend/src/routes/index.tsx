@@ -5,6 +5,8 @@ import Login from '@/pages/auth/Login';
 import Register from '@/pages/auth/Register';
 import Checkout from '@/pages/orders/Checkout';
 import OrderDetail from '@/pages/orders/OrderDetail';
+import Categories from '@/pages/public/Categories';
+import CategoryDetail from '@/pages/public/CategoryDetail';
 import Home from '@/pages/public/Home';
 import ProductDetail from '@/pages/public/ProductDetail';
 import Products from '@/pages/public/Products';
@@ -33,6 +35,14 @@ export const router = createBrowserRouter([
   {
     path: '/products/:id',
     element: <ProductDetail />,
+  },
+  {
+    path: '/categories',
+    element: <Categories />,
+  },
+  {
+    path: '/categories/:slug',
+    element: <CategoryDetail />,
   },
   {
     path: '/checkout',

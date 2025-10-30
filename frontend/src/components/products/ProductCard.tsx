@@ -54,7 +54,7 @@ export function ProductCard({ product }: ProductCardProps) {
       </CardHeader>
 
       <CardContent className="pb-4">
-        <p className="text-gray-600 text-sm mb-4 h-10 overflow-hidden">
+        <p className="text-gray-600 text-sm mb-4 line-clamp-2">
           {product.description || 'Sin descripción.'}
         </p>
         <div className="flex justify-between items-center">

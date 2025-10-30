@@ -1,11 +1,13 @@
-import { Cpu, Headphones, Laptop } from 'lucide-react';
-
+import { useCategories } from '@/api/hooks/useCategories';
 import { CategoryCard } from '@/components/home/CategoryCard';
 import { FeaturedProducts } from '@/components/home/FeaturedProducts';
 import { HeroSection } from '@/components/home/HeroSection';
 import { Layout } from '@/components/layout/Layout';
+import { getCategoryIcon } from '@/lib/utils/categoryIcons';
 
 export default function Home() {
+  const { data: categories, isLoading } = useCategories();
+
   return (
     <Layout>
       <HeroSection />
@@ -14,31 +16,22 @@ export default function Home() {
         <h2 className="text-4xl font-bold text-center text-gray-900 mb-16">
           Categorías Destacadas
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-          <CategoryCard
-            icon={<Cpu />}
-            title="Electrónica"
-            description="Gadgets, wearables y lo último en tecnología de consumo."
-            link="/categories/electronics"
-            buttonText="Ver productos"
-          />
-
-          <CategoryCard
-            icon={<Laptop />}
-            title="Ordenadores"
-            description="Laptops, PCs de escritorio y componentes de alto rendimiento."
-            link="/categories/computers"
-            buttonText="Ver productos"
-          />
-
-          <CategoryCard
-            icon={<Headphones />}
-            title="Accesorios"
-            description="Todo lo que necesitas para complementar tu setup perfecto."
-            link="/categories/accessories"
-            buttonText="Ver productos"
-          />
-        </div>
+        {isLoading ? (
+          <p className="text-center text-gray-600">Cargando categorías...</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+            {categories?.map((category) => (
+              <CategoryCard
+                key={category.id}
+                icon={getCategoryIcon(category.slug)}
+                title={category.name || ''}
+                description={category.description || ''}
+                link={`/categories/${category.slug}`}
+                buttonText="Ver productos"
+              />
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Features */}
