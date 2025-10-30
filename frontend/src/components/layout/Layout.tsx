@@ -1,5 +1,6 @@
 import { Footer } from './Footer';
 import { Navbar } from './Navbar';
+import ScrollToTop from './ScrollToTop';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -8,6 +9,7 @@ interface LayoutProps {
 export function Layout({ children }: LayoutProps) {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
+      <ScrollToTop />
       <Navbar />
       <main className="flex-1 container mx-auto px-4 py-8">{children}</main>
       <Footer />
