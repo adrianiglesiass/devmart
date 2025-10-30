@@ -4,6 +4,7 @@ import AdminPanel from '@/pages/admin/AdminPanel';
 import Login from '@/pages/auth/Login';
 import Register from '@/pages/auth/Register';
 import Checkout from '@/pages/orders/Checkout';
+import MyOrders from '@/pages/orders/MyOrders';
 import OrderDetail from '@/pages/orders/OrderDetail';
 import Categories from '@/pages/public/Categories';
 import CategoryDetail from '@/pages/public/CategoryDetail';
@@ -49,6 +50,14 @@ export const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <Checkout />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/orders',
+    element: (
+      <ProtectedRoute>
+        <MyOrders />
       </ProtectedRoute>
     ),
   },
