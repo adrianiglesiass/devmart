@@ -1,0 +1,18 @@
+# flyctl launch added from .gitignore
+**/.venv
+**/venv
+**/.env
+**/__pycache__
+**/*.pyc
+**/*.pyo
+
+# Keep instance/shop.db for production database
+# **/instance
+# **/*.db
+
+**/scripts
+**/.vscode
+
+# flyctl launch added from .venv/.gitignore
+.venv/**/*
+fly.toml
