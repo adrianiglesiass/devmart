@@ -71,7 +71,7 @@ export default function ProductDetail() {
                 <img
                   src={product.image_url}
                   alt={product.name}
-                  className="w-full h-auto aspect-square object-cover"
+                  className="w-full h-auto aspect-square object-contain bg-gray-50"
                   onError={(e) =>
                     (e.currentTarget.src =
                       'https://placehold.co/800x800/e5e7eb/6b7280?text=Sin+Imagen')

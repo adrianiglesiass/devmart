@@ -18,8 +18,19 @@ export const authApi = {
   },
 
   async getCurrentUser(): Promise<User> {
-    const { data } = await axiosInstance.get<User>('/auth/me');
-    return data;
+    try {
+      const { data } = await axiosInstance.get<User>('/auth/me');
+      return data;
+    } catch (error: any) {
+      // Silenciar errores esperados cuando no hay autenticación
+      if (error?.response?.status === 401 || error?.response?.status === 404) {
+        // Re-throw sin log para que React Query lo maneje
+        throw error;
+      }
+      // Para otros errores, sí mostrar en consola
+      console.error('Error al obtener usuario actual:', error);
+      throw error;
+    }
   },
 
   logout(): void {

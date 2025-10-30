@@ -30,8 +30,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     queryFn: authApi.getCurrentUser,
     enabled: hasToken,
     retry: (failureCount, error: any) => {
-      if (error?.response?.status === 401) return false;
+      // No reintentar si es 401 (no autorizado) o 404 (no encontrado)
+      if (error?.response?.status === 401 || error?.response?.status === 404) return false;
       return failureCount < 1;
+    },
+    meta: {
+      // Silenciar errores esperados en la consola
+      suppressErrorLog: true,
     },
   });
 
