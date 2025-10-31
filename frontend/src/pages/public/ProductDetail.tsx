@@ -57,14 +57,14 @@ export default function ProductDetail() {
 
   return (
     <Layout>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="px-4 sm:px-6 lg:px-8 py-4 lg:py-8">
         <BackButton
           to="/products"
           text="Volver a productos"
         />
 
         {/* Contenido principal */}
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-16">
           {/* Columna izquierda - Imagen */}
           <div>
             <Card className="overflow-hidden">
@@ -97,7 +97,7 @@ export default function ProductDetail() {
               </span>
             </div>
 
-            <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+            <h1 className="text-2xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
               {product.name}
             </h1>
 
@@ -105,7 +105,7 @@ export default function ProductDetail() {
             <Card className="mb-8 bg-gradient-to-br from-indigo-50 to-purple-50 border-indigo-100">
               <CardContent className="pt-6">
                 <div className="flex items-baseline gap-2 mb-2">
-                  <span className="text-5xl font-bold text-indigo-600">
+                  <span className="text-3xl lg:text-5xl font-bold text-indigo-600">
                     €{product.price?.toFixed(2)}
                   </span>
                   <span className="text-gray-500 text-lg">IVA incluido</span>
@@ -139,7 +139,7 @@ export default function ProductDetail() {
             <div className="mb-8">
               <Button
                 size="lg"
-                className={`w-full py-6 text-lg font-semibold rounded-lg transition-all interactive-action ${
+                className={`w-full py-4 lg:py-6 text-base lg:text-lg font-semibold rounded-lg transition-all interactive-action ${
                   product.stock
                     ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg hover:shadow-xl'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
