@@ -1,4 +1,5 @@
 import { useAuth } from '@/api/hooks/useAuth';
+import { BackButton } from '@/components/common/BackButton';
 import { Layout } from '@/components/layout/Layout';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -22,6 +23,10 @@ export default function Profile() {
   return (
     <Layout>
       <div className="mb-8">
+        <BackButton
+          to="/"
+          text="Volver al inicio"
+        />
         <h1 className="text-4xl font-bold mb-2 leading-relaxed">Mi Perfil</h1>
         <p className="text-gray-600">Gestiona tu información personal</p>
       </div>
