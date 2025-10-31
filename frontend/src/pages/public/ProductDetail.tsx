@@ -1,17 +1,17 @@
 import { Package, Shield, ShoppingCart, Truck } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 
+import { useAddToCart } from '@/api/hooks/useAddToCart';
 import { useProduct } from '@/api/hooks/useProducts';
 import { BackButton } from '@/components/common/BackButton';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useCart } from '@/context/CartContext';
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
   const { data: product, isLoading, error } = useProduct(Number(id));
-  const { addItem } = useCart();
+  const addToCart = useAddToCart();
 
   if (isLoading) {
     return (
@@ -39,7 +39,9 @@ export default function ProductDetail() {
     );
   }
 
-  const handleAddToCart = () => addItem(product);
+  const handleAddToCart = () => {
+    addToCart(product);
+  };
 
   const getStockStatus = () => {
     if (!product.stock || product.stock === 0) {
