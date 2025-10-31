@@ -1,8 +1,7 @@
 import { Loader2 } from 'lucide-react';
 
 import { useProducts } from '@/api/hooks/useProducts';
-
-import { ProductCard } from '../products/ProductCard';
+import { ProductCard } from '@/components/products/ProductCard';
 
 export function FeaturedProducts() {
   const { data: products, isLoading } = useProducts();
