@@ -1,12 +1,12 @@
-import { PackageX } from 'lucide-react';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { useCategoryBySlug, useCategoryProducts } from '@/api/hooks/useCategories';
 import { BackButton } from '@/components/common/BackButton';
+import { ErrorState } from '@/components/common/ErrorState';
+import { LoadingState } from '@/components/common/LoadingState';
 import { Layout } from '@/components/layout/Layout';
 import { ProductCard } from '@/components/products/ProductCard';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function CategoryDetail() {
@@ -27,9 +27,10 @@ export default function CategoryDetail() {
   if (isLoadingCategory) {
     return (
       <Layout>
-        <div className="container mx-auto px-4 py-8">
-          <p className="text-center text-gray-600">Cargando categoría...</p>
-        </div>
+        <LoadingState
+          message="Cargando categoría..."
+          minHeight="min-h-[300px]"
+        />
       </Layout>
     );
   }
@@ -37,28 +38,12 @@ export default function CategoryDetail() {
   if (categoryError || !category) {
     return (
       <Layout>
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex flex-col items-center justify-center min-h-[400px] text-center">
-            <PackageX className="w-20 h-20 text-gray-400 mb-6" />
-            <h2 className="text-3xl font-bold text-gray-900 mb-3">Categoría no encontrada</h2>
-            <p className="text-gray-600 text-lg mb-8 max-w-md">
-              La categoría que buscas no existe o ha sido eliminada.
-            </p>
-            <div className="flex gap-4">
-              <Link to="/categories">
-                <Button
-                  variant="default"
-                  className="bg-indigo-600 hover:bg-indigo-700"
-                >
-                  Ver todas las categorías
-                </Button>
-              </Link>
-              <Link to="/">
-                <Button variant="outline">Volver al inicio</Button>
-              </Link>
-            </div>
-          </div>
-        </div>
+        <ErrorState
+          message="Categoría no encontrada"
+          actionLabel="Volver atrás"
+          onAction={() => window.history.back()}
+          minHeight="min-h-[400px]"
+        />
       </Layout>
     );
   }
@@ -93,9 +78,11 @@ export default function CategoryDetail() {
         <div className="mb-6">
           <h2 className="text-2xl font-bold mb-4">Productos</h2>
         </div>
-
         {isLoadingProducts ? (
-          <p className="text-center text-gray-600">Cargando productos...</p>
+          <LoadingState
+            message="Cargando productos..."
+            minHeight="min-h-[300px]"
+          />
         ) : productsError ? (
           <p className="text-center text-red-600">Error al cargar los productos</p>
         ) : !products || products.length === 0 ? (

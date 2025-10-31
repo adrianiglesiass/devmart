@@ -4,6 +4,8 @@ import React from 'react';
 
 import { useCategories } from '@/api/hooks/useCategories';
 import { BackButton } from '@/components/common/BackButton';
+import { ErrorState } from '@/components/common/ErrorState';
+import { LoadingState } from '@/components/common/LoadingState';
 import { Layout } from '@/components/layout/Layout';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -27,9 +29,17 @@ export default function Categories() {
         </div>
 
         {isLoading ? (
-          <p className="text-center text-gray-600">Cargando categorías...</p>
+          <LoadingState
+            message="Cargando categorías..."
+            minHeight="min-h-[300px]"
+          />
         ) : error ? (
-          <p className="text-center text-red-600">Error al cargar las categorías</p>
+          <ErrorState
+            message="Error al cargar las categorías"
+            actionLabel="Reintentar"
+            onAction={() => window.location.reload()}
+            minHeight="min-h-[300px]"
+          />
         ) : !categories || categories.length === 0 ? (
           <Card>
             <CardContent className="pt-6">

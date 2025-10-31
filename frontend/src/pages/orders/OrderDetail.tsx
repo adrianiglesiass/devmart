@@ -1,16 +1,9 @@
-import {
-  AlertCircle,
-  ArrowLeft,
-  CheckCircle2,
-  Clock,
-  Loader2,
-  Package,
-  XCircle,
-} from 'lucide-react';
+import { AlertCircle, ArrowLeft, CheckCircle2, Clock, Package, XCircle } from 'lucide-react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { useOrder } from '@/api/hooks/useOrders';
 import { DemoBanner } from '@/components/common/DemoBanner';
+import { LoadingState } from '@/components/common/LoadingState';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -49,11 +42,11 @@ export default function OrderDetail() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="h-12 w-12 animate-spin text-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600">Cargando detalles del pedido...</p>
-        </div>
+      <div className="min-h-screen bg-gray-50">
+        <LoadingState
+          message="Cargando detalles del pedido..."
+          minHeight="min-h-screen"
+        />
       </div>
     );
   }

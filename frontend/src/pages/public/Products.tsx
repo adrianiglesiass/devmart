@@ -1,8 +1,9 @@
 import { useProducts } from '@/api/hooks/useProducts';
 import { BackButton } from '@/components/common/BackButton';
+import { ErrorState } from '@/components/common/ErrorState';
+import { LoadingState } from '@/components/common/LoadingState';
 import { Layout } from '@/components/layout/Layout';
 import { ProductCard } from '@/components/products/ProductCard';
-import { Button } from '@/components/ui/button';
 
 export default function Products() {
   const { data: products, isLoading, error } = useProducts();
@@ -10,11 +11,10 @@ export default function Products() {
   if (isLoading) {
     return (
       <Layout>
-        <div className="flex justify-center items-center min-h-[400px]"></div>
-        <div className="text-center">
-          <div className="animate-spin rounded-b-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-lg text-gray-600">Cargando productos...</p>
-        </div>
+        <LoadingState
+          message="Cargando productos..."
+          minHeight="min-h-[400px]"
+        />
       </Layout>
     );
   }
@@ -22,12 +22,12 @@ export default function Products() {
   if (error) {
     return (
       <Layout>
-        <div className="flex justify-center items-center min-h-[400px]:">
-          <div className="text-center">
-            <p className="text-lg text-red-600 mb-4">Error al cargar productos</p>
-            <Button onClick={() => window.location.reload()}>Reitentar</Button>
-          </div>
-        </div>
+        <ErrorState
+          message="Error al cargar productos"
+          actionLabel="Reintentar"
+          onAction={() => window.location.reload()}
+          minHeight="min-h-[400px]"
+        />
       </Layout>
     );
   }
