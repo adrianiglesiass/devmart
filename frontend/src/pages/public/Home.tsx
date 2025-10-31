@@ -1,4 +1,5 @@
 import { useCategories } from '@/api/hooks/useCategories';
+import { LoadingState } from '@/components/common/LoadingState';
 import { CategoryCard } from '@/components/home/CategoryCard';
 import { FeaturedProducts } from '@/components/home/FeaturedProducts';
 import { HeroSection } from '@/components/home/HeroSection';
@@ -17,7 +18,10 @@ export default function Home() {
           Categorías Destacadas
         </h2>
         {isLoading ? (
-          <p className="text-center text-gray-600">Cargando categorías...</p>
+          <LoadingState
+            message="Cargando categorías..."
+            minHeight="min-h-[300px]"
+          />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             {categories?.map((category) => (
