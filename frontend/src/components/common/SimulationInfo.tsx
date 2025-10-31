@@ -1,6 +1,6 @@
 import { CheckCircle2, Info } from 'lucide-react';
 
-import { Card, CardContent, CardHeader, CardTitle } from './card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface SimulationInfoProps {
   className?: string;
