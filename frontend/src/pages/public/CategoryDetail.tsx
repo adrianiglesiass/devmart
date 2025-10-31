@@ -73,9 +73,12 @@ export default function CategoryDetail() {
 
         <Card className="mb-8">
           <CardHeader>
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-4 mb-4 sm:flex-row sm:items-center sm:justify-between">
               <CardTitle className="text-3xl">{category.name}</CardTitle>
-              <Badge variant="secondary">
+              <Badge
+                variant="outline"
+                className="text-xs px-1 py-0.5 sm:text-sm sm:px-2 sm:py-1"
+              >
                 {category.product_count === 1
                   ? '1 producto'
                   : `${category.product_count} productos`}
