@@ -7,8 +7,11 @@ export function useAddToCart() {
   const { addItem } = useCart();
 
   const addToCart = (product: Product) => {
-    addItem(product);
-    toast.success(`${product.name} añadido al carrito`);
+    const added = addItem(product);
+    if (added) {
+      toast.dismiss();
+      toast.success(`${product.name} añadido al carrito`);
+    }
   };
 
   return addToCart;
