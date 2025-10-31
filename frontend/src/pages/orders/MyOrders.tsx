@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 
 import { useOrders } from '@/api/hooks/useOrders';
+import { BackButton } from '@/components/common/BackButton';
 import { Layout } from '@/components/layout/Layout';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -38,6 +39,10 @@ export default function MyOrders() {
   return (
     <Layout>
       <div className="mb-8">
+        <BackButton
+          to="/"
+          text="Volver al inicio"
+        />
         <h1 className="text-4xl font-bold mb-2 leading-relaxed">Mis Pedidos</h1>
         <p className="text-gray-600">Revisa el historial de tus compras</p>
       </div>
@@ -80,7 +85,10 @@ export default function MyOrders() {
                     </p>
                     <p className="text-lg font-semibold">Total: ${order.total?.toFixed(2)}</p>
                   </div>
-                  <Link to={`/orders/${order.id}`}>
+                  <Link
+                    to={`/orders/${order.id}`}
+                    className="interactive-link"
+                  >
                     <Button variant="outline">Ver Detalles</Button>
                   </Link>
                 </div>
@@ -91,7 +99,10 @@ export default function MyOrders() {
       ) : (
         <div className="text-center py-12">
           <p className="text-lg text-gray-600 mb-4">No tienes pedidos aún</p>
-          <Link to="/products">
+          <Link
+            to="/products"
+            className="interactive-link"
+          >
             <Button>Explorar Productos</Button>
           </Link>
         </div>

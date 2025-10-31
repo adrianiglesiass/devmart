@@ -4,6 +4,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
 import { useCreateOrder } from '@/api/hooks/useOrders';
+import { DemoBanner } from '@/components/common/DemoBanner';
+import { SimulationInfo } from '@/components/common/SimulationInfo';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
@@ -14,8 +16,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { DemoBanner } from '@/components/ui/demo-banner';
-import { SimulationInfo } from '@/components/ui/simulation-info';
 import { useCart } from '@/context/CartContext';
 
 export default function Checkout() {
@@ -173,7 +173,7 @@ export default function Checkout() {
           </Button>
           <Button
             size="lg"
-            className="flex-1"
+            className="flex-1 interactive-action"
             onClick={handleConfirm}
             disabled={createOrder.isPending || items.length === 0}
           >

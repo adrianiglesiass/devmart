@@ -75,11 +75,11 @@ export function Cart() {
 
               <Link
                 to="/checkout"
-                className="block"
+                className="block interactive-link"
                 onClick={() => setOpen(false)}
               >
                 <Button
-                  className="w-full"
+                  className="w-full interactive-action"
                   size="lg"
                 >
                   Finalizar Compra

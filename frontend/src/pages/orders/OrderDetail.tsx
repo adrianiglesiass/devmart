@@ -10,10 +10,10 @@ import {
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { useOrder } from '@/api/hooks/useOrders';
+import { DemoBanner } from '@/components/common/DemoBanner';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { DemoBanner } from '@/components/ui/demo-banner';
 
 const statusConfig = {
   pending: {

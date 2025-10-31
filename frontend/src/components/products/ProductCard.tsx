@@ -29,7 +29,10 @@ export function ProductCard({ product }: ProductCardProps) {
     <Card className="overflow-hidden hover:shadow-xl transition-shadow duration-300 group">
       {/* Imagen con efecto hover zoom */}
       <div className="h-60 overflow-hidden">
-        <Link to={`/products/${product.id}`}>
+        <Link
+          to={`/products/${product.id}`}
+          className="interactive-link"
+        >
           <img
             src={product.image_url || 'https://placehold.co/600x400/ccc/ffffff?text=Sin+Imagen'}
             alt={`Imagen de ${product.name}`}
@@ -46,7 +49,7 @@ export function ProductCard({ product }: ProductCardProps) {
         <CardTitle className="text-xl font-semibold text-gray-900 truncate">
           <Link
             to={`/products/${product.id}`}
-            className="hover:text-indigo-600 transition-colors"
+            className="hover:text-indigo-600 transition-colors interactive-link"
           >
             {product.name}
           </Link>
@@ -67,7 +70,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
       <CardFooter className="pt-0">
         <Button
-          className={`w-full text-white py-2 rounded-lg font-semibold transition-colors ${
+          className={`w-full text-white py-2 rounded-lg font-semibold transition-colors interactive-action ${
             isAgotado
               ? 'bg-gray-400 cursor-not-allowed hover:bg-gray-400'
               : 'bg-indigo-600 hover:bg-indigo-700'

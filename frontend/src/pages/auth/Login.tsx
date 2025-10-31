@@ -77,7 +77,7 @@ export default function Login() {
       <div className="absolute top-6 left-6">
         <Link
           to="/"
-          className="flex items-center text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors"
+          className="flex items-center text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors interactive-link"
         >
           ← Volver al mercado
         </Link>
@@ -127,7 +127,7 @@ export default function Login() {
             <CardFooter className="flex flex-col gap-4">
               <Button
                 type="submit"
-                className="w-full"
+                className="w-full interactive-action"
                 disabled={loading}
               >
                 {loading ? (
@@ -144,7 +144,7 @@ export default function Login() {
                 ¿No tienes cuenta?{' '}
                 <Link
                   to="/register"
-                  className="text-blue-600 hover:text-blue-700 font-semibold hover:underline"
+                  className="text-blue-600 hover:text-blue-700 font-semibold hover:underline interactive-link"
                 >
                   Regístrate aquí
                 </Link>

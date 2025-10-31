@@ -169,7 +169,10 @@ export function OrdersManagement() {
                       : 'N/A'}
                   </TableCell>
                   <TableCell className="text-right">
-                    <Link to={`/orders/${order.id}`}>
+                    <Link
+                      to={`/orders/${order.id}`}
+                      className="interactive-link"
+                    >
                       <Button
                         variant="outline"
                         size="sm"
