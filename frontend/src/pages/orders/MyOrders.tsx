@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 
 import { useOrders } from '@/api/hooks/useOrders';
 import { BackButton } from '@/components/common/BackButton';
+import { ErrorState } from '@/components/common/ErrorState';
+import { LoadingState } from '@/components/common/LoadingState';
 import { Layout } from '@/components/layout/Layout';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -13,12 +15,10 @@ export default function MyOrders() {
   if (isLoading) {
     return (
       <Layout>
-        <div className="flex justify-center items-center min-h-[400px]">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-            <p className="text-lg text-gray-600">Cargando pedidos...</p>
-          </div>
-        </div>
+        <LoadingState
+          message="Cargando pedidos..."
+          minHeight="min-h-[400px]"
+        />
       </Layout>
     );
   }
@@ -26,12 +26,12 @@ export default function MyOrders() {
   if (error) {
     return (
       <Layout>
-        <div className="flex justify-center items-center min-h-[400px]">
-          <div className="text-center">
-            <p className="text-lg text-red-600 mb-4">Error al cargar pedidos</p>
-            <Button onClick={() => window.location.reload()}>Reintentar</Button>
-          </div>
-        </div>
+        <ErrorState
+          message="Error al cargar pedidos"
+          actionLabel="Reintentar"
+          onAction={() => window.location.reload()}
+          minHeight="min-h-[400px]"
+        />
       </Layout>
     );
   }

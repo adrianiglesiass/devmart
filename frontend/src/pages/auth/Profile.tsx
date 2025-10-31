@@ -1,5 +1,6 @@
 import { useAuth } from '@/api/hooks/useAuth';
 import { BackButton } from '@/components/common/BackButton';
+import { LoadingState } from '@/components/common/LoadingState';
 import { Layout } from '@/components/layout/Layout';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -13,9 +14,10 @@ export default function Profile() {
   if (!user) {
     return (
       <Layout>
-        <div className="flex justify-center items-center min-h-[400px]">
-          <p className="text-lg text-gray-600">Cargando perfil...</p>
-        </div>
+        <LoadingState
+          message="Cargando perfil..."
+          minHeight="min-h-[400px]"
+        />
       </Layout>
     );
   }
