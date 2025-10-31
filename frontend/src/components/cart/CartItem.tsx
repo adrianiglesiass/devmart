@@ -1,4 +1,5 @@
 import { Minus, Plus, Trash2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 import type { Product } from '@/api/types/types';
 import { Button } from '@/components/ui/button';
@@ -6,9 +7,10 @@ import { useCart } from '@/context/CartContext';
 
 interface CartItemProps {
   item: Product & { quantity: number };
+  onClose?: () => void;
 }
 
-export function CartItem({ item }: CartItemProps) {
+export function CartItem({ item, onClose }: CartItemProps) {
   const { updateQuantity, removeItem } = useCart();
 
   return (
@@ -20,7 +22,13 @@ export function CartItem({ item }: CartItemProps) {
       />
 
       <div className="flex-1">
-        <h3 className="font-medium text-sm">{item.name}</h3>
+        <Link
+          to={`/products/${item.id}`}
+          className="font-medium text-sm hover:text-blue-600 transition-colors"
+          onClick={onClose}
+        >
+          {item.name}
+        </Link>
         <p className="text-sm text-gray-500 mb-2">€{item.price?.toFixed(2)}</p>
 
         <div className="flex items-center gap-2">
