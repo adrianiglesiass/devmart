@@ -1,16 +1,16 @@
 import { Link } from 'react-router-dom';
 
+import { useAddToCart } from '@/api/hooks/useAddToCart';
 import type { Product } from '@/api/types/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { useCart } from '@/context/CartContext';
 
 interface ProductCardProps {
   product: Product;
 }
 
 export function ProductCard({ product }: ProductCardProps) {
-  const { addItem } = useCart();
+  const addToCart = useAddToCart();
 
   const getStockStatus = () => {
     if (!product.stock || product.stock === 0) {
@@ -76,7 +76,7 @@ export function ProductCard({ product }: ProductCardProps) {
               : 'bg-indigo-600 hover:bg-indigo-700'
           }`}
           disabled={isAgotado}
-          onClick={() => addItem(product)}
+          onClick={() => addToCart(product)}
         >
           {isAgotado ? 'Agotado' : 'Añadir al carrito'}
         </Button>
