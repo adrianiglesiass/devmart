@@ -1,7 +1,8 @@
-import { ArrowLeft, Package, Shield, ShoppingCart, Truck } from 'lucide-react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Package, Shield, ShoppingCart, Truck } from 'lucide-react';
+import { Link, useParams } from 'react-router-dom';
 
 import { useProduct } from '@/api/hooks/useProducts';
+import { BackButton } from '@/components/common/BackButton';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,7 +10,6 @@ import { useCart } from '@/context/CartContext';
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const { data: product, isLoading, error } = useProduct(Number(id));
   const { addItem } = useCart();
 
@@ -31,7 +31,9 @@ export default function ProductDetail() {
       <Layout>
         <div className="text-center py-20">
           <p className="text-red-600 text-lg mb-4">Producto no encontrado</p>
-          <Button onClick={() => navigate('/products')}>Volver a productos</Button>
+          <Link to="/products">
+            <Button>Volver a productos</Button>
+          </Link>
         </div>
       </Layout>
     );
@@ -54,13 +56,10 @@ export default function ProductDetail() {
   return (
     <Layout>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <button
-          onClick={() => navigate('/products')}
-          className="flex items-center text-gray-600 hover:text-indigo-600 transition-colors mb-8 group"
-        >
-          <ArrowLeft className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" />
-          <span className="font-medium">Volver a productos</span>
-        </button>
+        <BackButton
+          to="/products"
+          text="Volver a productos"
+        />
 
         {/* Contenido principal */}
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16">
@@ -138,7 +137,7 @@ export default function ProductDetail() {
             <div className="mb-8">
               <Button
                 size="lg"
-                className={`w-full py-6 text-lg font-semibold rounded-lg transition-all ${
+                className={`w-full py-6 text-lg font-semibold rounded-lg transition-all interactive-action ${
                   product.stock
                     ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg hover:shadow-xl'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'

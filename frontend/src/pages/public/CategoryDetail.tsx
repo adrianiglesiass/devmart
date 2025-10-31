@@ -1,7 +1,8 @@
-import { ArrowLeft, PackageX } from 'lucide-react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { PackageX } from 'lucide-react';
+import { Link, useParams } from 'react-router-dom';
 
 import { useCategoryBySlug, useCategoryProducts } from '@/api/hooks/useCategories';
+import { BackButton } from '@/components/common/BackButton';
 import { Layout } from '@/components/layout/Layout';
 import { ProductCard } from '@/components/products/ProductCard';
 import { Badge } from '@/components/ui/badge';
@@ -10,7 +11,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 
 export default function CategoryDetail() {
   const { slug } = useParams<{ slug: string }>();
-  const navigate = useNavigate();
 
   const {
     data: category,
@@ -45,19 +45,17 @@ export default function CategoryDetail() {
               La categoría que buscas no existe o ha sido eliminada.
             </p>
             <div className="flex gap-4">
-              <Button
-                onClick={() => navigate('/categories')}
-                variant="default"
-                className="bg-indigo-600 hover:bg-indigo-700"
-              >
-                Ver todas las categorías
-              </Button>
-              <Button
-                onClick={() => navigate('/')}
-                variant="outline"
-              >
-                Volver al inicio
-              </Button>
+              <Link to="/categories">
+                <Button
+                  variant="default"
+                  className="bg-indigo-600 hover:bg-indigo-700"
+                >
+                  Ver todas las categorías
+                </Button>
+              </Link>
+              <Link to="/">
+                <Button variant="outline">Volver al inicio</Button>
+              </Link>
             </div>
           </div>
         </div>
@@ -68,13 +66,10 @@ export default function CategoryDetail() {
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
-        <button
-          onClick={() => navigate('/categories')}
-          className="flex items-center text-gray-600 hover:text-indigo-600 transition-colors mb-6 group"
-        >
-          <ArrowLeft className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" />
-          <span className="font-medium">Volver a categorías</span>
-        </button>
+        <BackButton
+          to="/categories"
+          text="Volver a categorías"
+        />
 
         <Card className="mb-8">
           <CardHeader>

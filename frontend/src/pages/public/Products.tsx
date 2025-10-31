@@ -1,4 +1,5 @@
 import { useProducts } from '@/api/hooks/useProducts';
+import { BackButton } from '@/components/common/BackButton';
 import { Layout } from '@/components/layout/Layout';
 import { ProductCard } from '@/components/products/ProductCard';
 import { Button } from '@/components/ui/button';
@@ -34,6 +35,10 @@ export default function Products() {
   return (
     <Layout>
       <div className="mb-8">
+        <BackButton
+          to="/"
+          text="Volver al inicio"
+        />
         <h1 className="text-4xl font-bold mb-2 leading-relaxed">Productos</h1>
         <p className="text-gray-600">Explora nuestro catálogo completo</p>
       </div>

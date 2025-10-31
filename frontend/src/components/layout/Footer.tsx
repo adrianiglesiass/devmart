@@ -9,7 +9,7 @@ export function Footer() {
           <div>
             <Link
               to="/"
-              className="text-2xl font-bold text-white hover:text-gray-200 transition-colors"
+              className="text-2xl font-bold text-white hover:text-gray-200 transition-colors interactive-link"
             >
               DevMart
             </Link>
@@ -25,7 +25,7 @@ export function Footer() {
               <li>
                 <Link
                   to="/"
-                  className="text-sm hover:text-white transition-colors"
+                  className="text-sm hover:text-white transition-colors interactive-link"
                 >
                   Inicio
                 </Link>
@@ -33,7 +33,7 @@ export function Footer() {
               <li>
                 <Link
                   to="/products"
-                  className="text-sm hover:text-white transition-colors"
+                  className="text-sm hover:text-white transition-colors interactive-link"
                 >
                   Productos
                 </Link>
@@ -41,7 +41,7 @@ export function Footer() {
               <li>
                 <Link
                   to="/categories"
-                  className="text-sm hover:text-white transition-colors"
+                  className="text-sm hover:text-white transition-colors interactive-link"
                 >
                   Categorías
                 </Link>
@@ -49,7 +49,7 @@ export function Footer() {
               <li>
                 <Link
                   to="/orders"
-                  className="text-sm hover:text-white transition-colors"
+                  className="text-sm hover:text-white transition-colors interactive-link"
                 >
                   Mis Pedidos
                 </Link>
@@ -64,7 +64,7 @@ export function Footer() {
               <li>
                 <a
                   href="#"
-                  className="text-sm hover:text-white transition-colors"
+                  className="text-sm hover:text-white transition-colors interactive-link"
                 >
                   Política de Privacidad
                 </a>
@@ -72,7 +72,7 @@ export function Footer() {
               <li>
                 <a
                   href="#"
-                  className="text-sm hover:text-white transition-colors"
+                  className="text-sm hover:text-white transition-colors interactive-link"
                 >
                   Términos de Servicio
                 </a>

@@ -28,7 +28,7 @@ export function CategoryCard({ icon, title, description, link, buttonText }: Cat
       <CardContent className="p-8 pt-0">
         <Link
           to={link}
-          className="text-indigo-600 font-semibold hover:text-indigo-800 transition-colors group flex items-center"
+          className="text-indigo-600 font-semibold hover:text-indigo-800 transition-colors group flex items-center interactive-link"
         >
           {buttonText}
           <span className="ml-1 transition-all group-hover:ml-2">&rarr;</span>

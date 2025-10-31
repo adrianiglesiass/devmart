@@ -108,7 +108,7 @@ export function Navbar() {
                       >
                         <Link
                           to={link.to}
-                          className="cursor-pointer"
+                          className="interactive-link"
                         >
                           {link.icon} {link.label}
                         </Link>
@@ -117,7 +117,7 @@ export function Navbar() {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     onClick={logout}
-                    className="text-red-600 cursor-pointer"
+                    className="text-red-600 interactive-link"
                   >
                     🚪 Cerrar sesión
                   </DropdownMenuItem>
@@ -125,7 +125,7 @@ export function Navbar() {
               </DropdownMenu>
             ) : (
               <Link to="/login">
-                <Button className="bg-indigo-600 text-white px-5 py-2 rounded-lg font-medium shadow-md hover:bg-indigo-700 transition-all transform hover:scale-105">
+                <Button className="bg-indigo-600 text-white px-5 py-2 rounded-lg font-medium shadow-md hover:bg-indigo-700 transition-all transform hover:scale-105 interactive-link">
                   Iniciar sesión
                 </Button>
               </Link>

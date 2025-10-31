@@ -16,7 +16,10 @@ export function HeroSection() {
           Tu tienda online de productos tecnológicos. Encuentra los mejores gadgets y accesorios.
         </p>
         <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-          <Link to="/products">
+          <Link
+            to="/products"
+            className="interactive-link"
+          >
             <Button
               className="bg-indigo-600 text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg font-semibold text-base sm:text-lg shadow-lg hover:bg-indigo-700 transition-all transform hover:-translate-y-1 h-auto w-full sm:w-auto"
               size="lg"
@@ -24,7 +27,10 @@ export function HeroSection() {
               Explorar Productos
             </Button>
           </Link>
-          <Link to="/categories">
+          <Link
+            to="/categories"
+            className="interactive-link"
+          >
             <Button
               size="lg"
               variant="outline"

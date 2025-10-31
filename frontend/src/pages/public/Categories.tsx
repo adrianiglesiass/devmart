@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import React from 'react';
 
 import { useCategories } from '@/api/hooks/useCategories';
+import { BackButton } from '@/components/common/BackButton';
 import { Layout } from '@/components/layout/Layout';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,6 +16,10 @@ export default function Categories() {
     <Layout>
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
+          <BackButton
+            to="/"
+            text="Volver al inicio"
+          />
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Todas las Categorías</h1>
           <p className="text-gray-600 text-lg">
             Explora nuestras categorías y encuentra lo que buscas
@@ -40,6 +45,7 @@ export default function Categories() {
                 <Link
                   key={category.id}
                   to={`/categories/${category.slug}`}
+                  className="interactive-link"
                 >
                   <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer group">
                     <CardHeader>

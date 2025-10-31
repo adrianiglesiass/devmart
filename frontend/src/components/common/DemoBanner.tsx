@@ -1,6 +1,6 @@
 import { Info } from 'lucide-react';
 
-import { Alert, AlertDescription, AlertTitle } from './alert';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 interface DemoBannerProps {
   className?: string;
