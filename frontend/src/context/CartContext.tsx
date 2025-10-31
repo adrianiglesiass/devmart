@@ -1,3 +1,5 @@
+import { toast } from 'sonner';
+
 import { type ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react';
 
 import type { Product } from '@/api/types/types';
@@ -8,7 +10,7 @@ interface CartItem extends Product {
 
 interface CartContextType {
   items: CartItem[];
-  addItem: (product: Product) => void;
+  addItem: (product: Product) => boolean;
   removeItem: (productId: number) => void;
   updateQuantity: (productId: number, quantity: number) => void;
   clearCart: () => void;
@@ -33,9 +35,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [items]);
 
   const addItem = (product: Product) => {
+    let added = false;
     setItems((prev) => {
       const existing = prev.find((item) => item.id === product.id);
 
+      const newQuantity = existing ? existing.quantity + 1 : 1;
+      if (newQuantity > (product.stock || 0)) {
+        toast.dismiss();
+        toast.error(`No hay suficiente stock disponible. Stock disponible: ${product.stock}`);
+        return prev;
+      }
+
+      added = true;
       if (existing) {
         return prev.map((item) =>
           item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item,
@@ -44,6 +55,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
       return [...prev, { ...product, quantity: 1 }];
     });
+    return added;
   };
 
   const removeItem = (productId: number) => {
@@ -55,7 +67,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
       removeItem(productId);
       return;
     }
-    setItems((prev) => prev.map((item) => (item.id === productId ? { ...item, quantity } : item)));
+    setItems((prev) => {
+      const item = prev.find((item) => item.id === productId);
+      if (!item) return prev;
+
+      if (quantity > (item.stock || 0)) {
+        toast.dismiss();
+        toast.error(`No hay suficiente stock disponible. Stock disponible: ${item.stock}`);
+        return prev;
+      }
+
+      return prev.map((item) => (item.id === productId ? { ...item, quantity } : item));
+    });
   };
 
   const clearCart = () => {
