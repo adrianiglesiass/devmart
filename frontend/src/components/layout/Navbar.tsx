@@ -40,7 +40,10 @@ export function Navbar() {
         <Link
           to="/"
           className="text-3xl font-bold text-indigo-600 hover:text-indigo-700"
-          onClick={closeMobileMenu}
+          onClick={() => {
+            closeMobileMenu();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
         >
           DevMart
         </Link>
