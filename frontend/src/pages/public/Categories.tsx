@@ -1,18 +1,74 @@
-import { Link } from 'react-router-dom';
-
-import React from 'react';
-
 import { useCategories } from '@/api/hooks/useCategories';
 import { BackButton } from '@/components/common/BackButton';
 import { ErrorState } from '@/components/common/ErrorState';
 import { LoadingState } from '@/components/common/LoadingState';
+import { CategoryCard } from '@/components/home/CategoryCard';
 import { Layout } from '@/components/layout/Layout';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { getCategoryIcon } from '@/lib/utils/categoryIcons';
 
 export default function Categories() {
   const { data: categories, isLoading, error } = useCategories();
+  const hasCategories = Boolean(categories && categories.length > 0);
+
+  const categoriesContent = (() => {
+    if (isLoading) {
+      return (
+        <LoadingState
+          message="Cargando categorías..."
+          minHeight="min-h-[300px]"
+        />
+      );
+    }
+
+    if (error) {
+      return (
+        <ErrorState
+          message="Error al cargar las categorías"
+          actionLabel="Reintentar"
+          onAction={() => window.location.reload()}
+          minHeight="min-h-[300px]"
+        />
+      );
+    }
+
+    if (!hasCategories) {
+      return (
+        <Card>
+          <CardContent className="pt-6">
+            <p className="text-center text-gray-600">No hay categorías disponibles</p>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {categories!.map((category) => {
+          const icon = getCategoryIcon(category.slug);
+          const productCount = category.product_count ?? 0;
+          const badgeText = productCount === 1 ? '1 producto' : `${productCount} productos`;
+          const categoryName = category.name ?? 'Categoría sin nombre';
+          const categoryDescription = category.description ?? undefined;
+          const slug = category.slug ?? '';
+          const categoryLink = slug ? `/categories/${slug}` : '/categories';
+          const categoryKey = category.id ?? slug ?? categoryName;
+
+          return (
+            <CategoryCard
+              key={categoryKey}
+              icon={icon}
+              title={categoryName}
+              description={categoryDescription}
+              link={categoryLink}
+              buttonText="Ver productos"
+              badgeText={badgeText}
+            />
+          );
+        })}
+      </div>
+    );
+  })();
 
   return (
     <Layout>
@@ -28,71 +84,7 @@ export default function Categories() {
           </p>
         </div>
 
-        {isLoading ? (
-          <LoadingState
-            message="Cargando categorías..."
-            minHeight="min-h-[300px]"
-          />
-        ) : error ? (
-          <ErrorState
-            message="Error al cargar las categorías"
-            actionLabel="Reintentar"
-            onAction={() => window.location.reload()}
-            minHeight="min-h-[300px]"
-          />
-        ) : !categories || categories.length === 0 ? (
-          <Card>
-            <CardContent className="pt-6">
-              <p className="text-center text-gray-600">No hay categorías disponibles</p>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {categories.map((category) => {
-              const icon = getCategoryIcon(category.slug);
-
-              return (
-                <Link
-                  key={category.id}
-                  to={`/categories/${category.slug}`}
-                  className="interactive-link"
-                >
-                  <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer group">
-                    <CardHeader>
-                      <div className="flex items-start justify-between">
-                        <div className="h-12 w-12 mb-4 group-hover:text-indigo-700">
-                          {React.cloneElement(icon, {
-                            className: 'h-full w-full',
-                            strokeWidth: 1.5,
-                          } as any)}
-                        </div>
-                        <Badge variant="secondary">
-                          {category.product_count === 1
-                            ? '1 producto'
-                            : `${category.product_count} productos`}
-                        </Badge>
-                      </div>
-                      <CardTitle className="text-2xl group-hover:text-indigo-600 transition-colors">
-                        {category.name}
-                      </CardTitle>
-                      {category.description && (
-                        <CardDescription className="text-base">
-                          {category.description}
-                        </CardDescription>
-                      )}
-                    </CardHeader>
-                    <CardContent>
-                      <span className="text-indigo-600 font-semibold group-hover:text-indigo-700 transition-colors flex items-center">
-                        Ver productos
-                        <span className="ml-1 transition-all group-hover:ml-2">&rarr;</span>
-                      </span>
-                    </CardContent>
-                  </Card>
-                </Link>
-              );
-            })}
-          </div>
-        )}
+        {categoriesContent}
       </div>
     </Layout>
   );
