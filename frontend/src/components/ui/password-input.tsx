@@ -19,9 +19,9 @@ export function PasswordInput({ className, containerClassName, ...props }: Passw
   return (
     <div className={clsx('relative', containerClassName)}>
       <Input
+        {...props}
         type={visible ? 'text' : 'password'}
         className={className}
-        {...props}
       />
       <Button
         type="button"
